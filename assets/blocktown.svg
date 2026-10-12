@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="blocktown-logo-title">
+  <title id="blocktown-logo-title">BlockTown logo</title>
+  <defs>
+    <linearGradient id="red-top" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ff4848"/><stop offset="1" stop-color="#ff3034"/></linearGradient>
+    <linearGradient id="red-front" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ee1420"/><stop offset="1" stop-color="#df0812"/></linearGradient>
+    <linearGradient id="red-side" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#c90c15"/><stop offset="1" stop-color="#af0007"/></linearGradient>
+    <linearGradient id="yellow-top" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffe66b"/><stop offset="1" stop-color="#ffdc45"/></linearGradient>
+    <linearGradient id="yellow-front" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffd40d"/><stop offset="1" stop-color="#ffc500"/></linearGradient>
+    <linearGradient id="yellow-side" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e9ac08"/><stop offset="1" stop-color="#d79a00"/></linearGradient>
+    <linearGradient id="blue-top" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#1c78e4"/><stop offset="1" stop-color="#0962cb"/></linearGradient>
+    <linearGradient id="blue-front" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#075dc4"/><stop offset="1" stop-color="#064bab"/></linearGradient>
+    <linearGradient id="blue-side" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#08469c"/><stop offset="1" stop-color="#073579"/></linearGradient>
+    <linearGradient id="base-left" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f5f5f6"/><stop offset="1" stop-color="#e8e8ea"/></linearGradient>
+    <linearGradient id="base-right" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#087eff"/><stop offset="1" stop-color="#0068f0"/></linearGradient>
+  </defs>
+  <rect width="256" height="256" fill="#000"/>
+  <g transform="translate(-43.943 -46.028) scale(.278)">
+    <!-- White isometric plinth, with its blue right-hand edge. -->
+    <path d="M243 739 618 515 994 739 618 968Z" fill="#fff"/>
+    <path d="M243 739 618 968 618 1045 243 813Z" fill="url(#base-left)"/>
+    <path d="M618 968 994 739 994 814 618 1045Z" fill="url(#base-right)"/>
+    <!-- The low red building: two faces and a notched roof. -->
+    <path d="M324 437 432 502 432 807 324 741Z" fill="url(#red-front)"/>
+    <path d="M432 502 515 455 515 758 432 807Z" fill="url(#red-side)"/>
+    <path d="M422 426 475 396 475 418 443 439Z" fill="#b40a11"/>
+    <path d="M324 437 435 372 475 396 422 426 443 439 496 408 515 419 515 455 432 502Z" fill="url(#red-top)"/>
+    <!-- Recessed red window, with a visible inner return and sill. -->
+    <path d="M365 510 397 528 397 649 365 630Z" fill="#b5060e"/>
+    <path d="M373 515 397 529 397 638 373 624Z" fill="#720006"/>
+    <path d="M365 630 373 624 397 638 397 649Z" fill="#fa3339"/>
+    <path d="M361 677 397 699 397 786 361 762Z" fill="#ae050b"/>
+    <path d="M373 684 397 699 397 786 373 771Z" fill="#710005"/>
+    <path d="M361 762 373 754 373 771 361 764Z" fill="#fff"/>
+    <path d="M467 537 488 525 488 619 467 632Z" fill="#760008"/>
+    <path d="M467 697 488 685 488 742 467 755Z" fill="#790008"/>
+    <!-- The tall central yellow tower. -->
+    <path d="M515 274 618 334 618 823 515 758Z" fill="url(#yellow-front)"/>
+    <path d="M618 334 733 267 733 756 618 823Z" fill="url(#yellow-side)"/>
+    <!-- Roof notch facing away from the viewer. -->
+    <path d="M655 245 675 232 675 256Z" fill="#c78b00"/>
+    <path d="M515 274 631 207 675 232 655 245 676 257 693 243 733 267 618 334 591 319 634 293 612 280 568 305Z" fill="url(#yellow-top)"/>
+    <!-- Long vertical cut within the front face. -->
+    <path d="M568 305 591 319 591 672 568 658Z" fill="#bb7d00"/>
+    <path d="M591 319 612 307 612 657 591 672Z" fill="#e3a400"/>
+    <path d="M612 280 634 293 612 307Z" fill="#f2b51c"/>
+    <path d="M541 400 559 411 559 651 541 640Z" fill="#ce9400"/>
+    <path d="M541 631 559 642 559 651 541 640Z" fill="#ffdf4c"/>
+    <path d="M558 688 587 706 587 805 558 788Z" fill="#805100"/>
+    <path d="M558 688 566 693 566 792 558 788Z" fill="#a26800"/>
+    <!-- The bright opening and the deep doorway on the right face. -->
+    <path d="M659 384 676 374 676 541 659 552Z" fill="#fffde9"/>
+    <path d="M659 659 688 641 688 776 659 794Z" fill="#895800"/>
+    <path d="M680 772 688 777 688 788 680 783Z" fill="#fff"/>
+    <!-- The medium-height blue building and its split rooftop. -->
+    <path d="M713 449 743 466 743 785 713 767Z" fill="url(#blue-front)"/>
+    <path d="M763 477 812 506 812 823 763 794Z" fill="url(#blue-front)"/>
+    <path d="M812 506 930 437 930 744 812 823Z" fill="url(#blue-side)"/>
+    <path d="M743 466 858 397 858 418 763 477Z" fill="#073c89"/>
+    <path d="M713 449 830 379 858 397 743 466Z" fill="url(#blue-top)"/>
+    <path d="M763 477 880 408 930 437 812 506Z" fill="url(#blue-top)"/>
+    <!-- The upper slot and the open lower slot give the blue facade its shape. -->
+    <path d="M743 466 763 477 763 659 743 648Z" fill="#063373"/>
+    <path d="M743 648 753 641 763 648 763 659Z" fill="#096cce"/>
+    <path d="M743 659 763 670 763 704 743 692Z" fill="#0860be"/>
+    <path d="M743 692 763 704 763 782 743 770Z" fill="#06306d"/>
+    <path d="M743 770 763 782 763 794 743 782Z" fill="#fff"/>
+    <!-- Blue-lit recessed window, with its dark right-hand reveal. -->
+    <path d="M858 539 899 515 899 681 858 706Z" fill="#01265b"/>
+    <path d="M858 539 883 524 883 691 858 706Z" fill="#188cff"/>
+    <path d="M883 524 899 515 899 681 883 691Z" fill="#002456"/>
+  </g>
+</svg>
