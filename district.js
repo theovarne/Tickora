@@ -12,7 +12,7 @@ export function surroundingTown(api,records){
   const background=(color,options={})=>material(color,{townSaturation:.3,townWarmLift:0,...options});
   const box=(x,y,z,w,h,d,color,rotation=0)=>baseBox(x,y,z,w,h,d,typeof color==='string'?background(color):color,rotation);
   const occupied=records.map((_,i)=>lotAt(i));
-  const asphalt=material('#40444c',{roughness:.5,metalness:.15,townColorMode:'global'}),stripe=material('#e8e3d4',{townColorMode:'global'});
+  const asphalt=material('#40444c',{roughness:.5,metalness:.15,townColorMode:'global',townSnowRoad:true}),stripe=material('#e8e3d4',{townColorMode:'global'});
   box(14.8,-.17,14.8,230,.3,230,asphalt);
   // Intersecting streets, with the four crosswalks around each junction.
   for(let i=-4;i<=5;i++){

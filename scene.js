@@ -4,9 +4,10 @@ import { RenderPass } from './vendor/addons/postprocessing/RenderPass.js';
 import { GTAOPass } from './vendor/addons/postprocessing/GTAOPass.js';
 import { UnrealBloomPass } from './vendor/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from './vendor/addons/postprocessing/OutputPass.js';
-import { districtMaterial, MiniatureLensPass, lightingAt, weatherLightingAt } from './appearance.js?v=19';
-import { lotAt, lotPoint, lotMatrix, surroundingTown, trafficPaths } from './district.js?v=19';
+import { districtMaterial, MiniatureLensPass, lightingAt, weatherLightingAt } from './appearance.js?v=21';
+import { lotAt, lotPoint, lotMatrix, surroundingTown, trafficPaths } from './district.js?v=21';
 import { createWeatherEffects } from './weather.js?v=19';
+import { createSnowCoverState, advanceSnowCover } from './snow-cover.js?v=21';
 
 // An independently built miniature exchange district. All architecture is procedural.
 const SPACING = 16;
@@ -113,17 +114,33 @@ export function createTown(container, records) {
   const batches=new Map(), materials=new Map(), lightMaterials=[], labelPositions=[], pickups=[], cars=[], pedestrians=[], dynamicGroups=[], plaques=[], crowdLimits=records.map(()=>50);
   const textureMaterials=[],linkTargets=[],metadataPanels=[];
   const warmLightPool=[],warmLighting={positions:{value:Array.from({length:10},()=>new THREE.Vector4())},colors:{value:Array.from({length:10},()=>new THREE.Vector4())}};
-  const surfaceWeather={wetness:{value:0},snow:{value:0}};
+  // The mask follows the same curves and lane offset as the moving vehicles.
+  const trackCanvas=document.createElement('canvas');trackCanvas.width=trackCanvas.height=1024;
+  const trackContext=trackCanvas.getContext('2d'),trackSize=256,trackScale=1024/trackSize;
+  trackContext.fillStyle='#000';trackContext.fillRect(0,0,1024,1024);
+  trackContext.strokeStyle='#fff';trackContext.lineWidth=1.35;trackContext.lineCap='round';trackContext.lineJoin='round';
+  for(const route of trafficPaths)for(const wheel of [-.35,.35]){
+    trackContext.beginPath();
+    for(let sample=0;sample<=480;sample++){
+      const u=sample/480,p=route.getPointAt(u),t=route.getTangentAt(u),lane=.72+wheel;
+      const px=(p.x+t.z*lane-14.8+trackSize/2)*trackScale,pz=(p.z-t.x*lane-14.8+trackSize/2)*trackScale;
+      if(sample===0)trackContext.moveTo(px,pz);else trackContext.lineTo(px,pz);
+    }
+    trackContext.stroke();
+  }
+  const trackTexture=new THREE.CanvasTexture(trackCanvas);trackTexture.flipY=false;
+  const surfaceWeather={wetness:{value:0},roofSnow:{value:0},groundSnow:{value:0},roadTracks:{value:trackTexture}};
+  let snowCover=createSnowCoverState();
   const featuredActor=new THREE.Vector3();let featuredVisible=false;
   const focusCenter={value:new THREE.Vector3(7.4,0,7.4)};
   const lotMatrices=records.map((_,i)=>lotMatrix(i));let activeLot=-1;
   function placeInLot(object){if(activeLot>=0)object.applyMatrix4(lotMatrices[activeLot]);return object;}
   function material(color, options={}) {
     const key=color+JSON.stringify(options);if(materials.has(key))return materials.get(key);
-    const {townColorMode,townSaturation,townWarmLift,...surface}=options;
+    const {townColorMode,townSaturation,townWarmLift,townSnowRoad,townSnowRetention,...surface}=options;
     const roughness=color==='#8d8a86'?.95:records.some(record=>record.color===color)?.7:.85;
     const raw=new THREE.MeshStandardMaterial({color,roughness,metalness:0,...surface});
-    raw.userData={townColorMode,townSaturation,townWarmLift};
+    raw.userData={townColorMode,townSaturation,townWarmLift,townSnowRoad,townSnowRetention};
     const m=districtMaterial(raw,focusCenter,warmLighting,surfaceWeather);materials.set(key,m);return m;
   }
   function staticGeometry(geo,mat,x,y,z,rx=0,ry=0,rz=0) {
@@ -137,7 +154,7 @@ export function createTown(container, records) {
     const mat=districtMaterial(new THREE.MeshStandardMaterial({map,roughness:.86,metalness:0,side:THREE.DoubleSide,...(map.userData.brandSign?{emissive:'#ffe3c4',emissiveMap:map,emissiveIntensity:.18}:{})}),focusCenter,warmLighting,surfaceWeather);mat.userData.lotIndex=activeLot;textureMaterials.push(mat);
     const mesh=new THREE.Mesh(new THREE.PlaneGeometry(w,h),mat);mesh.position.set(x,y,z);mesh.rotation.y=rotation;placeInLot(mesh);scene.add(mesh);return mesh;
   }
-  const sidewalkMat=material('#d2c9b9'), pavementMat=material('#b9b5ab'), roadMat=material('#515963'), whiteMat=material('#dad5c7'), blackMat=material('#343b40'), metalMat=material('#777e78',{metalness:.35,roughness:.5});
+  const sidewalkMat=material('#d2c9b9'), pavementMat=material('#b9b5ab'), roadMat=material('#515963',{townSnowRoad:true}), whiteMat=material('#dad5c7'), blackMat=material('#343b40'), metalMat=material('#777e78',{metalness:.35,roughness:.5});
   const windowMat=material('#eee2bd',{emissive:'#ffefbd',emissiveIntensity:.28,roughness:.3,metalness:.1});lightMaterials.push(windowMat);
   function warmWindow(x,y,z,w,h,rotation=0){
     const mat=districtMaterial(new THREE.MeshStandardMaterial({color:'#ffdcae',emissive:'#ffb866',emissiveIntensity:.7,roughness:.6}),focusCenter,warmLighting,surfaceWeather);mat.userData={upperWindow:true,lotIndex:activeLot};lightMaterials.push(mat);textureMaterials.push(mat);
@@ -417,7 +434,7 @@ export function createTown(container, records) {
   const bodyBox=new THREE.BoxGeometry(1,1,1);
   function peopleMesh(color) {
     if(peopleMeshes.has(color))return peopleMeshes.get(color);
-    const mesh=new THREE.InstancedMesh(bodyBox,material(color),pedestrians.length*6);mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);mesh.frustumCulled=false;mesh.castShadow=true;mesh.receiveShadow=true;mesh.count=0;scene.add(mesh);peopleMeshes.set(color,mesh);return mesh;
+    const mesh=new THREE.InstancedMesh(bodyBox,material(color,{townSnowRetention:0}),pedestrians.length*6);mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);mesh.frustumCulled=false;mesh.castShadow=true;mesh.receiveShadow=true;mesh.count=0;scene.add(mesh);peopleMeshes.set(color,mesh);return mesh;
   }
   const peopleColors=[...new Set([...skinColors,...clothingColors,...pantsColors,...hairColors,...shoeColors,'#242425'])];
   for(const c of peopleColors)peopleMesh(c);
@@ -629,7 +646,6 @@ export function createTown(container, records) {
     const amount=Number(intensity);if(!Number.isFinite(amount))throw new TypeError('Weather intensity must be a finite number.');
     weatherState.type=normalized;weatherState.intensity=clamp(amount,0,1);
     surfaceWeather.wetness.value=normalized==='rain'?weatherState.intensity:0;
-    surfaceWeather.snow.value=normalized==='snow'?weatherState.intensity:0;
     weatherEffects.setWeather(normalized,weatherState.intensity);weatherEffects.update(0,target,true,weatherLot);
     setTime(hour);renderDirty=true;
     return{...weatherState};
@@ -640,7 +656,9 @@ export function createTown(container, records) {
     for(let i=0;i<10;i++){const slot=ranked[i],position=warmLighting.positions.value[i],color=warmLighting.colors.value[i];if(slot){const light=slot.light;position.set(light.position.x,light.position.y,light.position.z,light.radius);color.set(light.color.r,light.color.g,light.color.b,slot.intensity);}else{position.set(0,0,0,0);color.set(0,0,0,0);}}
   }
   function animate(now){
-    if(disposed)return;frame=requestAnimationFrame(animate);const dt=Math.max(0,Math.min(.06,(now-last)/1000));last=now;if(!paused)time+=dt*speed;
+    if(disposed)return;frame=requestAnimationFrame(animate);const elapsed=Math.max(0,(now-last)/1000),dt=Math.min(.06,elapsed);last=now;if(!paused)time+=dt*speed;
+    snowCover=advanceSnowCover(snowCover,{...weatherState,paused,dt:elapsed});
+    surfaceWeather.roofSnow.value=snowCover.roofCoverage;surfaceWeather.groundSnow.value=snowCover.groundCoverage;
     target.lerp(desiredTarget,1-Math.exp(-dt*3));const angle=THREE.MathUtils.euclideanModulo(desiredYaw-yaw+Math.PI,Math.PI*2)-Math.PI;yaw+=angle*(1-Math.exp(-dt*3));
     desiredCamera();camera.position.lerp(desiredPos,1-Math.exp(-dt*5));lookTarget.copy(target);lookTarget.y+=1.635;camera.lookAt(lookTarget);
     weatherEffects.update(dt,target,paused,weatherLot);
@@ -706,6 +724,6 @@ export function createTown(container, records) {
     orbit(dx,dy){renderDirty=true;const baseYaw=lotAt(selected).angle+Math.PI/4-.2;desiredYaw=baseYaw+clamp(desiredYaw-baseYaw-Number(dx)*.003,-.45,.45);pitch=clamp(pitch+Number(dy)*.0015,.46,.78);},
     zoom(delta){renderDirty=true;distance=clamp(distance+Number(delta)*.0123465,24.693*.75,24.693*1.3);},
     resetView(){renderDirty=true;desiredYaw=lotAt(selected).angle+Math.PI/4-.2;pitch=.58;distance=24.693;},resize,onSelect(callback){selectCallback=callback;},
-    dispose(){disposed=true;cancelAnimationFrame(frame);observer.disconnect();weatherEffects.dispose();scene.traverse(o=>{if(o.geometry)o.geometry.dispose();});for(const mat of [...materials.values(),...textureMaterials]){if(mat.map)mat.map.dispose();mat.dispose();}ao.dispose();bloom.dispose();lens.dispose();composer.dispose();renderer.dispose();renderer.domElement.remove();},
+    dispose(){disposed=true;cancelAnimationFrame(frame);observer.disconnect();weatherEffects.dispose();trackTexture.dispose();scene.traverse(o=>{if(o.geometry)o.geometry.dispose();});for(const mat of [...materials.values(),...textureMaterials]){if(mat.map)mat.map.dispose();mat.dispose();}ao.dispose();bloom.dispose();lens.dispose();composer.dispose();renderer.dispose();renderer.domElement.remove();},
   };
 }

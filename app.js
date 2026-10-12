@@ -1,5 +1,5 @@
 import { exchanges, loadSnapshot, loadMarketData, formatVolume } from './data.js?v=17';
-import { createTown } from './scene.js?v=19';
+import { createTown } from './scene.js?v=21';
 import { mountExplorer } from './explore-ui.js?v=17';
 
 const $ = (id) => document.getElementById(id);

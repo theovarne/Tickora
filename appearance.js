@@ -10,7 +10,14 @@ export function districtMaterial(material, center, warmLights, weather) {
     shader.uniforms.townStaticSaturation = {value:Number.isFinite(material.userData.townSaturation)?THREE.MathUtils.clamp(material.userData.townSaturation,0,1):-1};
     shader.uniforms.townStaticWarmLift = {value:Number.isFinite(material.userData.townWarmLift)?Math.max(0,material.userData.townWarmLift):-1};
     if(warmLights){shader.uniforms.townWarmPositions=warmLights.positions;shader.uniforms.townWarmColors=warmLights.colors;}
-    if(weather){shader.uniforms.townWetness=weather.wetness;shader.uniforms.townSnow=weather.snow;}
+    if(weather){
+      shader.uniforms.townWetness=weather.wetness;
+      shader.uniforms.townRoofSnow=weather.roofSnow;
+      shader.uniforms.townGroundSnow=weather.groundSnow;
+      shader.uniforms.townSnowRoad={value:material.userData.townSnowRoad?1:0};
+      shader.uniforms.townSnowRetention={value:material.userData.townSnowRetention===0?0:1};
+      shader.uniforms.townSnowTracks=weather.roadTracks;
+    }
     shader.vertexShader = shader.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 townPosition;');
     shader.vertexShader = shader.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>
       vec4 townVertex = vec4(transformed, 1.0);
@@ -21,19 +28,35 @@ export function districtMaterial(material, center, warmLights, weather) {
     shader.fragmentShader = shader.fragmentShader.replace('#include <common>', `#include <common>
       uniform vec3 townCenter; uniform float townPreserveColor,townStaticSaturation,townStaticWarmLift; varying vec3 townPosition;
       float townBlockMask(){vec2 offset=abs(townPosition.xz-townCenter.xz);return 1.0-smoothstep(5.5,5.7,max(offset.x,offset.y));}
-      ${weather?'uniform float townWetness,townSnow;':''}
+      ${weather?`uniform float townWetness,townRoofSnow,townGroundSnow,townSnowRoad,townSnowRetention;
+      uniform sampler2D townSnowTracks;
+      float townSnowHash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+      float townSnowNoise(vec2 p){
+        vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);
+        return mix(mix(townSnowHash(i),townSnowHash(i+vec2(1.0,0.0)),f.x),
+          mix(townSnowHash(i+vec2(0.0,1.0)),townSnowHash(i+vec2(1.0)),f.x),f.y);
+      }`:''}
       ${warmLights?'uniform vec4 townWarmPositions[10]; uniform vec4 townWarmColors[10];':''}`);
     if(weather)shader.fragmentShader=shader.fragmentShader.replace('#include <lights_physical_fragment>', `
-    if(townWetness>0.001||townSnow>0.001){
+    if(townWetness>0.001||townRoofSnow>0.001||townGroundSnow>0.001){
       vec3 surfaceNormal=normalize(normal*mat3(viewMatrix));
-      float upward=smoothstep(0.55,0.9,surfaceNormal.y);
+      float upward=smoothstep(0.35,0.82,surfaceNormal.y);
       float nearGround=1.0-smoothstep(0.5,1.3,townPosition.y);
       float wetSurface=townWetness*upward*(0.35+0.65*nearGround);
       diffuseColor.rgb*=1.0-0.22*wetSurface;
       roughnessFactor=mix(roughnessFactor,0.14,wetSurface);
-      float snowTexture=0.87+0.13*sin(townPosition.x*4.7+townPosition.z*6.1);
-      float snowCover=townSnow*upward*snowTexture*(townPosition.y>0.5?0.93:0.35);
-      diffuseColor.rgb=mix(diffuseColor.rgb,vec3(0.89,0.94,0.97),snowCover);
+      float snowAmount=mix(townGroundSnow,townRoofSnow,smoothstep(0.45,1.5,townPosition.y));
+      vec2 snowPoint=townPosition.xz;
+      float snowTexture=townSnowNoise(snowPoint*1.15)*0.56
+        +townSnowNoise(snowPoint*4.3)*0.29+townSnowNoise(snowPoint*17.0)*0.15;
+      float snowPatches=smoothstep(1.0-snowAmount*1.15-0.075,
+        1.0-snowAmount*1.15+0.075,smoothstep(0.16,0.84,snowTexture));
+      float snowCover=upward*townSnowRetention*clamp(snowAmount*0.32+snowPatches*0.88,0.0,1.0);
+      // Traffic packs the snow into narrow, darker lanes; curb snow stays soft.
+      float packedSnow=townSnowRoad*texture2D(townSnowTracks,(snowPoint-14.8)/256.0+0.5).r;
+      snowCover*=1.0-packedSnow*0.48;
+      vec3 snowColor=mix(vec3(0.91,0.95,0.98),vec3(0.98,0.99,1.0),snowTexture);
+      diffuseColor.rgb=mix(diffuseColor.rgb,snowColor,snowCover);
       roughnessFactor=mix(roughnessFactor,0.96,snowCover);
     }
     #include <lights_physical_fragment>`);
@@ -58,7 +81,7 @@ export function districtMaterial(material, center, warmLights, weather) {
       outgoingLight = mix(districtGray, outgoingLight, districtSaturation);
       #include <opaque_fragment>`);
   };
-  material.customProgramCacheKey = () => `blocktown-district-v19-${warmLights?1:0}-${weather?1:0}`;
+  material.customProgramCacheKey = () => `blocktown-district-v21-${warmLights?1:0}-${weather?1:0}`;
   return material;
 }
 
