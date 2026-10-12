@@ -141,7 +141,8 @@ dialog::backdrop{-webkit-backdrop-filter:blur(8px)}
 @media(max-width:650px){.world-map{padding:155px 14px 270px;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;align-content:start}.map-store{padding:12px;gap:4px 8px;grid-template-columns:26px 1fr}.map-store img{width:25px;height:25px}.map-store b{font-size:12px}.map-store span{font-size:10px}}
 
 /* Weather and daylight sit beside the existing compact town controls. */
-#sky-open{position:absolute;top:70px;right:0;display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:34px;max-width:160px;padding:8px 12px;border:1px solid #ffffff33;border-radius:20px;background:#1c222c70;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:#e5ebf2;font-size:12px;font-weight:500;line-height:1.2;white-space:nowrap;transition:background .18s,transform .14s}
+.sky-tools{position:absolute;top:70px;right:0;display:flex;align-items:center;gap:8px}
+#sky-open{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:34px;max-width:160px;padding:8px 12px;border:1px solid #ffffff33;border-radius:20px;background:#1c222c70;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:#e5ebf2;font-size:12px;font-weight:500;line-height:1.2;white-space:nowrap;transition:background .18s,transform .14s}
 #sky-open:hover{background:#ffffff20;color:#fff}
 #sky-open:active{transform:translateY(1px);background:#ffffff2b}
 #sky-open svg,.sky-options svg{width:17px;height:17px;flex:none;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
@@ -166,9 +167,28 @@ dialog::backdrop{-webkit-backdrop-filter:blur(8px)}
 #sky-strength{font-size:12px;font-weight:500;font-variant-numeric:tabular-nums;color:#f0d2ab}
 #sky-intensity{display:block;width:100%;height:20px;margin:0;accent-color:#e9b781;cursor:pointer}
 #sky-intensity:disabled{opacity:.4;cursor:default}
-@media(max-width:950px) and (min-width:651px){#sky-open{top:97px;right:143px;max-width:108px;min-height:34px;gap:6px;padding:8px 9px;font-size:11px}#sky-open svg{width:14px;height:14px}}
+#sound-toggle{display:grid;place-items:center;flex:none;width:34px;height:34px;padding:0;border:1px solid #ffffff33;border-radius:50%;background:#1c222c70;backdrop-filter:blur(12px);color:#e5ebf2;transition:background .18s,transform .14s}
+#sound-toggle:hover{background:#ffffff20}#sound-toggle:active{transform:translateY(1px)}
+#sound-toggle[aria-pressed=true]{color:#f7d7aa;border-color:#e8c08273;background:#e8c08218}
+#sound-toggle svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+#sound-toggle .sound-waves,#sound-toggle[aria-pressed=true] .sound-muted{display:none}
+#sound-toggle[aria-pressed=true] .sound-waves{display:block}
+.sky-sound{margin-top:20px;padding-top:18px;border-top:1px solid #ffffff1c}
+.sky-sound-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.sky-sound h3{margin:0;font-size:12px;font-weight:500;color:#e3eaf2}
+#sky-sound-toggle{min-width:48px;padding:5px 11px;border:1px solid #ffffff2c;border-radius:16px;background:#ffffff08;color:#b8c6d4;font-size:11px}
+#sky-sound-toggle[aria-pressed=true]{color:#f7d7aa;border-color:#e8c08273;background:#e8c0820d}
+.sky-sound p{margin:7px 0 16px;font-size:11px;color:#afbfce}
+.sky-sound label{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;color:#bdcbd8;font-size:11px}
+#sound-level,#sound-town-level{color:#f0d2ab;font-variant-numeric:tabular-nums}
+#sound-volume,#sound-town{display:block;width:100%;height:20px;margin:0;accent-color:#e9b781;cursor:pointer}
+.sky-sound .town-volume-label{margin-top:15px}
+.sky-sound .sound-town-note{font-size:10px;line-height:1.5;margin:8px 0 0;color:#94a7b8}
+@media(max-width:950px) and (min-width:651px){.sky-tools{top:52px;right:0}#sky-open{max-width:108px;min-height:30px;gap:6px;padding:7px 9px;font-size:11px}#sky-open svg{width:14px;height:14px}#sound-toggle{width:30px;height:30px}}
 @media(max-width:650px){
-  #sky-open{top:122px;left:0;right:auto;min-height:30px;max-width:140px;gap:6px;padding:7px 10px;font-size:11px}
+  .sky-tools{top:122px;left:0;right:auto}
+  #sky-open{min-height:30px;max-width:140px;gap:6px;padding:7px 10px;font-size:11px}
+  #sound-toggle{width:30px;height:30px}
   #sky-open svg{width:14px;height:14px}
   #sky-dialog{width:calc(100vw - 32px);padding:22px 18px;border-radius:18px}
   #sky-title{font-size:22px}

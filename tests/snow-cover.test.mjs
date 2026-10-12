@@ -61,64 +61,59 @@ test('Coverage accumulates monotonically and stronger snow deposits faster', () 
   assert.deepEqual(runFor(45, { intensity: 0 }), createSnowCoverState());
 });
 
-test('Pausing freezes both accumulation and melting, including a long paused delta', () => {
+test('Pausing freezes snowfall, while a paused weather switch clears all snow immediately', () => {
   const initial = Object.freeze({ roofCoverage: 0.6, groundCoverage: 0.4 });
-  for (const type of ['snow', 'clear', 'sunny', 'rain']) {
-    assert.deepEqual(advanceSnowCover(initial, { type, paused: true, intensity: 1, dt: 3600 }), initial);
+  assert.deepEqual(advanceSnowCover(initial, { type: 'snow', paused: true, intensity: 1, dt: 3600 }), initial);
+  for (const type of ['clear', 'sunny', 'rain']) {
+    const cleared = advanceSnowCover(initial, { type, paused: true, dt: 0 });
+    assert.deepEqual(cleared, { roofCoverage: 0, groundCoverage: 0 });
+    assert.deepEqual(advanceSnowCover(cleared, { type: 'snow', paused: true, dt: 3600 }), cleared);
   }
   const resumed = advanceSnowCover(initial, { type: 'snow', paused: false, dt: 0.25 });
   assert.ok(resumed.roofCoverage > initial.roofCoverage);
   assert.ok(resumed.groundCoverage > initial.groundCoverage);
 });
 
-test('Background-tab deltas cannot suddenly accumulate or melt minutes of snow', () => {
+test('Background-tab deltas cannot suddenly accumulate minutes of snow', () => {
   const initial = { roofCoverage: 0.4, groundCoverage: 0.3 };
-  for (const type of ['snow', 'rain']) {
-    const huge = advanceSnowCover(initial, { type, dt: 3600 });
-    const bounded = advanceSnowCover(initial, { type, dt: 0.5 });
-    assert.deepEqual(huge, bounded);
-    assert.ok(Math.abs(huge.roofCoverage - initial.roofCoverage) < 0.01);
-    assert.ok(Math.abs(huge.groundCoverage - initial.groundCoverage) < 0.01);
-  }
+  const huge = advanceSnowCover(initial, { type: 'snow', dt: 3600 });
+  const bounded = advanceSnowCover(initial, { type: 'snow', dt: 0.5 });
+  assert.deepEqual(huge, bounded);
+  assert.ok(Math.abs(huge.roofCoverage - initial.roofCoverage) < 0.01);
+  assert.ok(Math.abs(huge.groundCoverage - initial.groundCoverage) < 0.01);
   for (const dt of [-5, NaN, Infinity, -Infinity, 0]) {
     assert.deepEqual(advanceSnowCover(initial, { type: 'snow', dt }), initial);
   }
 });
 
-test('Changing weather or snow intensity preserves accumulated snow and allows resuming', () => {
+test('Snow intensity changes preserve accumulation; returning after another weather starts fresh', () => {
   const original = runFor(45);
   const reselected = advanceSnowCover(original, { type: 'snow', intensity: 0.2, dt: 0 });
   assert.deepEqual(reselected, original);
   const lighter = runFor(10, { intensity: 0.2 }, original);
   assert.ok(lighter.roofCoverage > original.roofCoverage);
   assert.ok(lighter.groundCoverage > original.groundCoverage);
-  const melting = runFor(10, { type: 'clear' }, lighter);
-  assert.ok(melting.roofCoverage > 0 && melting.roofCoverage < lighter.roofCoverage);
-  assert.ok(melting.groundCoverage > 0 && melting.groundCoverage < lighter.groundCoverage);
-  const snowyAgain = runFor(10, { intensity: 0.65 }, melting);
-  assert.ok(snowyAgain.roofCoverage > melting.roofCoverage);
-  assert.ok(snowyAgain.groundCoverage > melting.groundCoverage);
+  const cleared = advanceSnowCover(lighter, { type: 'clear', dt: 0 });
+  assert.deepEqual(cleared, { roofCoverage: 0, groundCoverage: 0 });
+  const snowyAgain = runFor(10, { intensity: 0.65 }, cleared);
+  assert.deepEqual(snowyAgain, runFor(10, { intensity: 0.65 }));
+  assert.ok(snowyAgain.roofCoverage > 0 && snowyAgain.roofCoverage < original.roofCoverage);
+  assert.ok(snowyAgain.groundCoverage > 0 && snowyAgain.groundCoverage < original.groundCoverage);
 });
 
-test('Sunshine and rain thaw slowly but faster than clear weather and never below zero', () => {
-  const full = { roofCoverage: 1, groundCoverage: 1 };
-  const clear = runFor(30, { type: 'clear' }, full);
-  const sunny = runFor(30, { type: 'sunny' }, full);
-  const rain = runFor(30, { type: 'rain', intensity: 0.65 }, full);
-  const drizzle = runFor(30, { type: 'rain', intensity: 0 }, full);
-  for (const result of [clear, sunny, rain, drizzle]) {
-    assert.ok(result.roofCoverage > 0.8 && result.roofCoverage < 1);
-    assert.ok(result.groundCoverage > 0.8 && result.groundCoverage < 1);
+test('Every non-snow weather clears surfaces without waiting for a clock tick or intensity', () => {
+  const full = Object.freeze({ roofCoverage: 1, groundCoverage: 1 });
+  for (const type of ['clear', 'sunny', 'rain', 'unknown', undefined]) {
+    for (const dt of [0, -1, NaN, Infinity, 3600]) {
+      for (const paused of [false, true]) {
+        const cleared = advanceSnowCover(full, { type, paused, intensity: 0, dt });
+        assert.deepEqual(cleared, { roofCoverage: 0, groundCoverage: 0 });
+        assert.notEqual(cleared, full);
+      }
+    }
   }
-  for (const result of [sunny, rain, drizzle]) {
-    assert.ok(result.roofCoverage < clear.roofCoverage);
-    assert.ok(result.groundCoverage < clear.groundCoverage);
-  }
-  assert.ok(rain.roofCoverage < drizzle.roofCoverage);
-  assert.ok(rain.groundCoverage < drizzle.groundCoverage);
-  assert.deepEqual(runFor(1000, { type: 'clear' }, full), { roofCoverage: 0, groundCoverage: 0 });
-  assert.deepEqual(runFor(1000, { type: 'sunny' }, full), { roofCoverage: 0, groundCoverage: 0 });
-  assert.deepEqual(runFor(1000, { type: 'rain' }, full), { roofCoverage: 0, groundCoverage: 0 });
+  assert.deepEqual(full, { roofCoverage: 1, groundCoverage: 1 });
+  assert.deepEqual(advanceSnowCover(full), { roofCoverage: 0, groundCoverage: 0 });
 });
 
 test('Normal frame rates give the same elapsed-time result and invalid intensities stay bounded', () => {

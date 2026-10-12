@@ -4,10 +4,10 @@ import { RenderPass } from './vendor/addons/postprocessing/RenderPass.js';
 import { GTAOPass } from './vendor/addons/postprocessing/GTAOPass.js';
 import { UnrealBloomPass } from './vendor/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from './vendor/addons/postprocessing/OutputPass.js';
-import { districtMaterial, MiniatureLensPass, lightingAt, weatherLightingAt } from './appearance.js?v=21';
+import { districtMaterial, MiniatureLensPass, lightingAt, weatherLightingAt } from './appearance.js?v=23';
 import { lotAt, lotPoint, lotMatrix, surroundingTown, trafficPaths } from './district.js?v=21';
 import { createWeatherEffects } from './weather.js?v=19';
-import { createSnowCoverState, advanceSnowCover } from './snow-cover.js?v=21';
+import { createSnowCoverState, advanceSnowCover } from './snow-cover.js?v=23';
 
 // An independently built miniature exchange district. All architecture is procedural.
 const SPACING = 16;
@@ -645,6 +645,9 @@ export function createTown(container, records) {
     if(!['clear','sunny','rain','snow'].includes(normalized))throw new RangeError('Weather must be clear, sunny, rain or snow.');
     const amount=Number(intensity);if(!Number.isFinite(amount))throw new TypeError('Weather intensity must be a finite number.');
     weatherState.type=normalized;weatherState.intensity=clamp(amount,0,1);
+    if(normalized!=='snow'){
+      snowCover=createSnowCoverState();surfaceWeather.roofSnow.value=0;surfaceWeather.groundSnow.value=0;
+    }
     surfaceWeather.wetness.value=normalized==='rain'?weatherState.intensity:0;
     weatherEffects.setWeather(normalized,weatherState.intensity);weatherEffects.update(0,target,true,weatherLot);
     setTime(hour);renderDirty=true;

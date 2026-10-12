@@ -1,9 +1,16 @@
 import { exchanges, loadSnapshot, loadMarketData, formatVolume } from './data.js?v=17';
-import { createTown } from './scene.js?v=21';
+import { createTown } from './scene.js?v=23';
 import { mountExplorer } from './explore-ui.js?v=17';
+import { createAmbientAudio } from './ambient.js?v=23';
 
 const $ = (id) => document.getElementById(id);
 const state = { index: 0, paused: window.matchMedia('(prefers-reduced-motion: reduce)').matches, speed: 8, hour: 19, cycle: true, macro: true, shutter: .22, weather: 'clear', intensity: .65, timeMode: 'auto' };
+const ambient=createAmbientAudio(),soundState={enabled:false,volume:.35,townLevel:.5};
+let soundDesired=false,soundBusy=false;
+try{const saved=localStorage.getItem('blocktown:volume');if(saved!==null&&Number.isFinite(Number(saved)))soundState.volume=Math.max(0,Math.min(1,Number(saved)));}catch{}
+ambient.setVolume(soundState.volume);
+try{const saved=localStorage.getItem('blocktown:town-volume');if(saved!==null&&Number.isFinite(Number(saved)))soundState.townLevel=Math.max(0,Math.min(1,Number(saved)));}catch{}
+ambient.setTownLevel(soundState.townLevel);
 let town, market, hintTimer, explorer, refreshing = null, graphicsFailed = false;
 const launch = new URLSearchParams(location.search);
 const launchHour = launch.get('hour');
@@ -51,6 +58,9 @@ $('tabs').addEventListener('keydown',e=>{
   if(index===null)return;e.preventDefault();e.stopPropagation();select(index);$('tabs').children[state.index]?.focus({preventScroll:true});
 });
 function renderCard() {
+  const peakActivity=Math.max(1,...exchanges.map(record=>Number.isFinite(record.volume)?Math.max(0,record.volume):0));
+  const selectedVolume=exchanges[state.index]?.volume;
+  ambient.setActivity(Number.isFinite(selectedVolume) ? .2+.8*Math.sqrt(Math.max(0,selectedVolume)/peakActivity) : .35);
   const r=exchanges[state.index], total=exchanges.filter(x=>x.type===r.type).length;
   $('district-no').textContent=`${state.index+1} / ${exchanges.length}`;
   $('lab').textContent=r.name;$('lab-line').textContent=r.available?`${r.name} · ${r.type} · #${r.rank} of ${total} by 24h volume`:`${r.name} · ${r.type}`;
@@ -79,6 +89,7 @@ function renderCard() {
 function select(index, immediate=false) {
   const next=(index+exchanges.length)%exchanges.length, changed=next!==state.index;
   state.index=next;selectedId=exchanges[next].id;renderCard();town?.setSelection(state.index,immediate);updateTags();
+  if(changed&&!immediate)ambient.playVisit();
   try{localStorage.setItem('blocktown:exchange',selectedId);}catch{}
   saveView();
   if($('explore-dialog').open)explorer?.render();
@@ -108,15 +119,32 @@ function shutter(value,feedback=false){state.shutter=Math.min(.45,Math.max(0,Mat
 function cycle(value){state.cycle=!!value;$('cycle').checked=state.cycle;state.timeMode=state.cycle?'auto':state.hour>=6&&state.hour<18?'day':'night';renderSky();persistSky();hint(state.cycle?'Day/night cycle on':'Day/night cycle off');saveView();}
 function persistSky(){try{localStorage.setItem('blocktown:sky',JSON.stringify({weather:state.weather,intensity:state.intensity,timeMode:state.timeMode}));}catch{}}
 function renderSky(){
+  ambient.setWeather(state.weather,state.intensity);ambient.setTime(state.hour);renderSound();
   $('sky-label').textContent=`${weatherNames[state.weather]} · ${state.timeMode==='auto'?'Auto':state.timeMode==='day'?'Day':'Night'}`;
   $('sky-open').title=`${weatherNames[state.weather]} · ${$('clock').textContent}`;
-  $('sky-open').setAttribute('aria-label',`Weather and time · ${$('sky-label').textContent}`);
+  $('sky-open').setAttribute('aria-label',`Town atmosphere · ${$('sky-label').textContent}`);
   const icon=$('sky-weather').querySelector(`[data-weather="${state.weather}"] svg`);if(icon)$('sky-open').querySelector('svg').innerHTML=icon.innerHTML;
   $('sky-time').querySelectorAll('button').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.time===state.timeMode)));
   $('sky-weather').querySelectorAll('button').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.weather===state.weather)));
   $('sky-intensity').value=state.intensity;$('sky-strength').textContent=`${Math.round(state.intensity*100)}%`;
   $('sky-intensity').disabled=state.weather==='clear';$('sky-intensity').closest('.sky-intensity').hidden=state.weather==='clear';
   $('app').dataset.weather=state.weather;$('app').dataset.time=state.hour>=6&&state.hour<18?'day':'night';
+}
+function renderSound(){
+  const enabled=soundState.enabled;
+  $('sound-toggle').setAttribute('aria-pressed',String(enabled));
+  $('sound-toggle').setAttribute('aria-label',enabled?'Mute ambient sound':'Enable ambient sound');
+  $('sound-toggle').title=enabled?`Sound on · ${Math.round(soundState.volume*100)}%`:'Sound off';
+  $('sky-sound-toggle').setAttribute('aria-pressed',String(enabled));$('sky-sound-toggle').textContent=enabled?'On':'Off';
+  $('sound-volume').value=soundState.volume;$('sound-level').textContent=`${Math.round(soundState.volume*100)}%`;
+  $('sound-town').value=soundState.townLevel;$('sound-town-level').textContent=`${Math.round(soundState.townLevel*100)}%`;
+  $('sound-scene').textContent=state.weather==='rain'?'Rain & gentle drops':state.weather==='snow'?'Winter wind':state.hour>=6&&state.hour<18?'Breeze & birdsong':'Night breeze & crickets';
+}
+async function toggleSound(){
+  if(soundBusy)return;soundBusy=true;soundDesired=!soundState.enabled;
+  try{soundState.enabled=await ambient.setEnabled(soundDesired);soundDesired=soundState.enabled;}
+  catch(error){soundState.enabled=false;soundDesired=false;console.warn('BlockTown audio',error);hint('Tap sound to try again');}
+  finally{soundBusy=false;renderSound();}
 }
 function setTimeMode(mode){
   if(!['day','night','auto'].includes(mode))return;
@@ -155,6 +183,15 @@ $('sky-close').onclick=()=>{$('sky-dialog').close();};
 $('sky-time').addEventListener('click',event=>{const button=event.target.closest('button[data-time]');if(button)setTimeMode(button.dataset.time);});
 $('sky-weather').addEventListener('click',event=>{const button=event.target.closest('button[data-weather]');if(button)setWeather(button.dataset.weather);});
 $('sky-intensity').oninput=event=>setWeather(state.weather,event.target.value);
+$('sound-toggle').onclick=toggleSound;$('sky-sound-toggle').onclick=toggleSound;
+$('sound-volume').oninput=event=>{soundState.volume=Math.max(0,Math.min(1,Number(event.target.value)));ambient.setVolume(soundState.volume);renderSound();try{localStorage.setItem('blocktown:volume',String(soundState.volume));}catch{}};
+$('sound-town').oninput=event=>{soundState.townLevel=Math.max(0,Math.min(1,Number(event.target.value)));ambient.setTownLevel(soundState.townLevel);renderSound();try{localStorage.setItem('blocktown:town-volume',String(soundState.townLevel));}catch{}};
+renderSound();
+document.addEventListener('visibilitychange',async()=>{
+  try{soundState.enabled=await ambient.setEnabled(!document.hidden&&soundDesired);renderSound();}
+  catch{soundState.enabled=false;renderSound();}
+});
+window.addEventListener('pagehide',()=>{ambient.setEnabled(false).catch(()=>{});});
 $('sky-dialog').addEventListener('click',event=>{if(event.target===$('sky-dialog')){const rect=$('sky-dialog').getBoundingClientRect();if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)$('sky-dialog').close();}});
 document.addEventListener('keydown',e=>{
   if((e.metaKey||e.ctrlKey)&&!e.altKey&&e.key.toLowerCase()==='k'){e.preventDefault();if(!e.repeat){if($('sky-dialog').open)$('sky-dialog').close();explorer?.open();}return;}

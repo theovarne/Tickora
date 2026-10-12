@@ -25,7 +25,8 @@ The app runs as a static website: native JavaScript modules, locally vendored Th
 - **Focused discovery** with CEX/DEX and network filters, volume/name/24-hour-change sorting, result counts, and a clear empty state.
 - **Personal favorites** saved in the browser, with a dedicated collection filter and keyboard focus retained after updates.
 - **Direct 3D navigation** through building picking, store tabs, previous/next controls, drag-to-orbit, wheel zoom, and touch pinch-to-zoom.
-- **Weather and light** with Day, Night, or Auto time; Clear, Sunny, Rain, or Snow scenes; adjustable intensity, wet surfaces, rain ripples, and snow that gradually accumulates on roofs and streets, then melts when the weather changes.
+- **Weather and light** with Day, Night, or Auto time; Clear, Sunny, Rain, or Snow scenes; adjustable intensity, wet surfaces, rain ripples, and snow that gradually accumulates on roofs and streets. Switching away from Snow immediately clears the snow cover; returning starts a fresh snowfall.
+- **Scene soundscapes** with rain and droplets, winter wind, daytime birdsong, nighttime crickets, quiet neighborhood chatter, footsteps, passing traffic, and shop chimes. Use the speaker button to turn sound on; adjust master volume and town activity in the atmosphere panel.
 - **Scene playback** with 1×, 8×, 24×, and 48× crowd/traffic timelapse, pause, motion exposure, and a macro depth-of-field lens.
 - **Save and share** the current scene as a PNG or share a URL containing the selected exchange, hour, and weather. A 2D exchange map keeps browsing available when WebGL cannot initialize.
 
@@ -85,13 +86,14 @@ Serve the files over HTTP so the browser can load modules and the bundled JSON s
 | `scene.js` | Procedural buildings, instanced citizens, traffic, camera movement, raycast picking, and image capture. |
 | `appearance.js` | District materials, miniature lens, day/night lighting, and weather-adjusted appearance. |
 | `weather.js` | GPU rain, snowfall, ground ripples, particle budgets, and resource cleanup. |
-| `snow-cover.js` | Time-based roof and street snow accumulation, intensity scaling, gradual melting, and pause behavior. |
+| `snow-cover.js` | Time-based roof and street snow accumulation, intensity scaling, immediate weather-switch clearing, and pause behavior. |
+| `ambient.js` | Procedural Web Audio soundscapes, weather/time transitions, volume control, and audio lifecycle. |
 | `assets/` | Exchange marks, BlockTown artwork/icons, the local font, and the dated market snapshot. |
 | `vendor/` | Three.js and the selected rendering/postprocessing add-ons. |
 | `scripts/` | Local static server, syntax checks, and project consistency checks. |
 | `tests/` | Node tests for search/filter behavior and market-data cache integrity. |
 
-Favorites, the selected exchange, sky preferences, and eligible market observations are stored in `localStorage`. Weather is controlled locally in the scene.
+Favorites, the selected exchange, sky preferences, sound volume, and eligible market observations are stored in `localStorage`. Weather is controlled locally in the scene. Ambient audio is synthesized with Web Audio and starts only when you enable the speaker button; hidden pages stop playing sound.
 
 ## Market data
 

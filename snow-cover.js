@@ -17,33 +17,18 @@ export function createSnowCoverState(initial = {}) {
  * Advance by real elapsed seconds, returning a new state; never mutate `state`.
  * At intensity .65, roofs fill in 120 seconds and ground fills in 190 seconds.
  * Use this clock independently of crowd/time-lapse speed. A long background-tab
- * delta counts as at most half a second, and a paused clock does not advance.
+ * delta counts as at most half a second, and paused snow does not accumulate.
+ * Leaving snow clears both surfaces immediately, even while paused or at dt 0.
  */
 export function advanceSnowCover(state, { type = 'clear', intensity = DEFAULT_INTENSITY, paused = false, dt = 0 } = {}) {
+  if (type !== 'snow') return createSnowCoverState();
   const next = createSnowCoverState(state);
   const seconds = paused || !Number.isFinite(dt) ? 0 : Math.min(MAX_STEP_SECONDS, Math.max(0, dt));
   if (seconds === 0) return next;
 
   const strength = coverage(intensity, DEFAULT_INTENSITY);
-  if (type === 'snow') {
-    // Linear deposition keeps thin early snow visible and stronger snow faster.
-    next.roofCoverage = coverage(next.roofCoverage + seconds * strength / 78);
-    next.groundCoverage = coverage(next.groundCoverage + seconds * strength / 123.5);
-    return next;
-  }
-
-  // Full clear-weather melt takes 12–15 minutes. Sunshine and rain accelerate
-  // thawing; even light rain melts more quickly than the clear-weather baseline.
-  let roofMultiplier = 1;
-  let groundMultiplier = 1;
-  if (type === 'sunny') {
-    roofMultiplier = 2.8;
-    groundMultiplier = 3.2;
-  } else if (type === 'rain') {
-    roofMultiplier = 2.2 * (0.5 + 0.5 * strength);
-    groundMultiplier = 3 * (0.5 + 0.5 * strength);
-  }
-  next.roofCoverage = coverage(next.roofCoverage - seconds * roofMultiplier / 720);
-  next.groundCoverage = coverage(next.groundCoverage - seconds * groundMultiplier / 900);
+  // Linear deposition keeps thin early snow visible and stronger snow faster.
+  next.roofCoverage = coverage(next.roofCoverage + seconds * strength / 78);
+  next.groundCoverage = coverage(next.groundCoverage + seconds * strength / 123.5);
   return next;
 }

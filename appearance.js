@@ -51,7 +51,7 @@ export function districtMaterial(material, center, warmLights, weather) {
         +townSnowNoise(snowPoint*4.3)*0.29+townSnowNoise(snowPoint*17.0)*0.15;
       float snowPatches=smoothstep(1.0-snowAmount*1.15-0.075,
         1.0-snowAmount*1.15+0.075,smoothstep(0.16,0.84,snowTexture));
-      float snowCover=upward*townSnowRetention*clamp(snowAmount*0.32+snowPatches*0.88,0.0,1.0);
+      float snowCover=upward*townSnowRetention*clamp(snowAmount*0.32+snowPatches*0.88,0.0,1.0)*min(1.0,snowAmount*12.5);
       // Traffic packs the snow into narrow, darker lanes; curb snow stays soft.
       float packedSnow=townSnowRoad*texture2D(townSnowTracks,(snowPoint-14.8)/256.0+0.5).r;
       snowCover*=1.0-packedSnow*0.48;
@@ -81,7 +81,7 @@ export function districtMaterial(material, center, warmLights, weather) {
       outgoingLight = mix(districtGray, outgoingLight, districtSaturation);
       #include <opaque_fragment>`);
   };
-  material.customProgramCacheKey = () => `blocktown-district-v21-${warmLights?1:0}-${weather?1:0}`;
+  material.customProgramCacheKey = () => `blocktown-district-v23-${warmLights?1:0}-${weather?1:0}`;
   return material;
 }
 
