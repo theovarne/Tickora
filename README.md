@@ -165,6 +165,7 @@ The site uses browser-side public-feed requests. Deployment does not require a b
 
 ## Customize
 
+- **Contract address:** set `contractAddress` in `site-config.js` to the exact address. The footer displays the full, selectable text without an external explorer link; an empty value shows `CA soon`.
 - **Venues:** edit the `venues` registry in `data.js` and add the matching exchange asset in `assets/`. Adjust feed aliases and parent-protocol mappings there when necessary.
 - **Search:** extend `aliasGroups` in `explore.js` for alternative names or spellings.
 - **The town:** change storefront styles, geometry, street props, and layout in `scene.js`; tune materials, lighting, and the macro lens in `appearance.js`.

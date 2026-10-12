@@ -39,7 +39,7 @@ dialog::backdrop{-webkit-backdrop-filter:blur(8px)}
 #show-controls[aria-expanded=true]{color:#fff;background:#ffffff18}
 @media(max-width:1150px){#show-controls{display:inline-flex;vertical-align:middle;align-items:center;justify-content:center;width:28px;height:28px;margin-right:12px;padding:6px;border:1px solid #ffffff25;border-radius:50%}#show-controls:active{background:#ffffff30;transform:translateY(1px)}}
 
-.ca-pending{display:flex;align-items:center;gap:11px;min-width:176px;height:26px;padding:4px 12px;border:1px solid #ffffff26;border-radius:14px;background:#1c222c66;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#e4e8ef;font-size:11px;white-space:nowrap}.ca-pending b{font-size:9px;font-weight:600;letter-spacing:1.2px;color:#bbc3d0}.ca-pending>span{font-weight:500;letter-spacing:.3px}#app.ui-off .ca-pending{display:none}@media(max-width:650px){.ca-pending{height:24px;min-width:140px;padding:3px 10px;font-size:10px}}
+.ca-display{display:flex;align-items:center;gap:11px;min-width:176px;height:26px;padding:4px 12px;border:1px solid #ffffff26;border-radius:14px;background:#1c222c66;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#e4e8ef;font-size:11px;white-space:nowrap}.ca-display b{font-size:9px;font-weight:600;letter-spacing:1.2px;color:#bbc3d0}.ca-display>span{font-weight:500;letter-spacing:.3px}#app.ui-off .ca-display{display:none}@media(max-width:650px){.ca-display{height:24px;min-width:140px;padding:3px 10px;font-size:10px}}
 .vignette::after{content:'';position:absolute;inset:0;pointer-events:none;opacity:var(--daylight,0);background:linear-gradient(180deg,rgba(26,34,51,.5),transparent 26%,transparent 76%,rgba(20,27,38,.44))}
 
 /* BlockTown keeps the town visible around a focused exchange browser. */
@@ -214,3 +214,14 @@ footer .github-link svg{width:14px;height:14px}
 a.scene-download{text-decoration:none;display:inline-flex;align-items:center;gap:8px;margin-left:8px}
 @media(max-width:420px){a.scene-download{margin-left:0}}
 @media(max-width:650px){footer .github-link{width:26px;height:24px;padding:4px}}
+.ca-display.ca-address{min-width:0;max-width:560px;height:auto;min-height:26px;align-items:flex-start}
+.ca-address b{flex:none;line-height:16px}
+.ca-address #ca-value{min-width:0;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:11px;line-height:16px;letter-spacing:0;white-space:normal;overflow-wrap:anywhere;user-select:text;-webkit-user-select:text;cursor:text}
+@media(max-width:650px){
+  .has-ca footer{flex-wrap:wrap;gap:6px 8px}
+  .has-ca .ca-address{flex-basis:100%;max-width:none;min-height:24px}
+  .ca-address #ca-value{font-size:11px;line-height:16px}
+  .has-ca .details{bottom:90px}
+  .has-ca .playback{bottom:90px}
+  .has-ca.controls-on .details{bottom:174px}
+}

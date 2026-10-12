@@ -2,8 +2,15 @@ import { exchanges, loadSnapshot, loadMarketData, formatVolume } from './data.js
 import { createTown } from './scene.js?v=24';
 import { mountExplorer } from './explore-ui.js?v=17';
 import { createAmbientAudio } from './ambient.js?v=23';
+import { contractAddress } from './site-config.js?v=25';
 
 const $ = (id) => document.getElementById(id);
+const caText=contractAddress.trim();
+$('ca-value').textContent=caText||'soon';
+$('ca-status').classList.toggle('ca-address',Boolean(caText));
+$('ca-status').setAttribute('aria-label',caText?`Contract address: ${caText}`:'CA soon');
+$('ca-status').title=caText?'Contract address':'Contract address coming soon';
+$('app').classList.toggle('has-ca',Boolean(caText));
 const state = { index: 0, paused: window.matchMedia('(prefers-reduced-motion: reduce)').matches, speed: 8, hour: 19, cycle: true, macro: true, shutter: .22, weather: 'clear', intensity: .65, timeMode: 'auto' };
 const ambient=createAmbientAudio(),soundState={enabled:false,volume:.35,townLevel:.5};
 let soundDesired=false,soundBusy=false;
