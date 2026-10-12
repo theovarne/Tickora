@@ -1,5 +1,5 @@
 import { exchanges, loadSnapshot, loadMarketData, formatVolume } from './data.js?v=17';
-import { createTown } from './scene.js?v=23';
+import { createTown } from './scene.js?v=24';
 import { mountExplorer } from './explore-ui.js?v=17';
 import { createAmbientAudio } from './ambient.js?v=23';
 
@@ -221,7 +221,7 @@ $('world').addEventListener('pointerdown',e=>{
 });
 $('world').addEventListener('pointermove',e=>{
   if(!activePointers.has(e.pointerId)){
-    if(e.pointerType==='mouse'){const hit=town?.hitTest?.(e.clientX,e.clientY);pointerCursor(hit?'pointer':'grab',hit?.url?'Share BlockTown on X':hit?.label||'');}
+    if(e.pointerType==='mouse'){const hit=town?.hitTest?.(e.clientX,e.clientY);pointerCursor(hit?'pointer':'grab',hit?.label||'');}
     return;
   }
   activePointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
@@ -268,10 +268,10 @@ function shareURL(){
   const url=new URL('https://blocktown.fun/');url.searchParams.set('exchange',exchanges[state.index].id);
   url.searchParams.set('hour',state.hour.toFixed(2));url.searchParams.set('cycle','0');url.searchParams.set('weather',state.weather);url.searchParams.set('intensity',state.intensity.toFixed(2));return url.href;
 }
-function updateShare(){$('follow').href=`https://twitter.com/intent/tweet?text=${encodeURIComponent(`Explore ${exchanges[state.index].name} in BlockTown`)}&url=${encodeURIComponent(shareURL())}`;}
-$('follow').addEventListener('pointerdown',updateShare);
-$('follow').addEventListener('focus',updateShare);
-$('follow').addEventListener('click',updateShare);
+function updateShare(){$('share-view').href=`https://x.com/intent/post?text=${encodeURIComponent(`Explore ${exchanges[state.index].name} in BlockTown`)}&url=${encodeURIComponent(shareURL())}`;}
+$('share-view').addEventListener('pointerdown',updateShare);
+$('share-view').addEventListener('focus',updateShare);
+$('share-view').addEventListener('click',updateShare);
 window.addEventListener('popstate',()=>{
   const params=new URLSearchParams(location.search),index=exchanges.findIndex(record=>record.id===params.get('exchange'));
   if(params.has('hour')&&params.get('hour')!==''&&Number.isFinite(Number(params.get('hour'))))hour(Number(params.get('hour')));

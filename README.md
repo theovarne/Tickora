@@ -148,7 +148,7 @@ https://blocktown.fun/?exchange=uniswap&hour=21&cycle=0&weather=rain&intensity=0
 | `weather` | `clear`, `sunny`, `rain`, or `snow`. |
 | `intensity` | Scene intensity from `0.2` to `1`. |
 
-The share action captures the current hour and uses `cycle=0` so the recipient opens the same time of day.
+The **Share current view** action in About BlockTown captures the current hour and uses `cycle=0` so the recipient opens the same time of day. The footer X link opens the official [@blocktown_fun](https://x.com/blocktown_fun) account.
 
 ## Deploy to Vercel
 

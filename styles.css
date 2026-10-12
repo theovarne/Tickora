@@ -211,4 +211,6 @@ dialog::backdrop{-webkit-backdrop-filter:blur(8px)}
 #app.map-view[data-weather=snow] .map-store{border-color:#e7f1fa42}
 footer .github-link{justify-content:center;width:28px;height:26px;padding:5px;flex:none}
 footer .github-link svg{width:14px;height:14px}
+a.scene-download{text-decoration:none;display:inline-flex;align-items:center;gap:8px;margin-left:8px}
+@media(max-width:420px){a.scene-download{margin-left:0}}
 @media(max-width:650px){footer .github-link{width:26px;height:24px;padding:4px}}

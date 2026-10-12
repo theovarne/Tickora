@@ -11,7 +11,7 @@ import { createSnowCoverState, advanceSnowCover } from './snow-cover.js?v=23';
 
 // An independently built miniature exchange district. All architecture is procedural.
 const SPACING = 16;
-const SHARE_URL = 'https://twitter.com/intent/tweet?text=Explore%20BlockTown&url=https%3A%2F%2Fblocktown.fun';
+const X_PROFILE_URL = 'https://x.com/blocktown_fun';
 const palettes = ['#f0ca56', '#ee6faa', '#dedbd4', '#d8b157', '#4e83cf', '#9181b8', '#c19372', '#71c897', '#66b9bd', '#8f95cb', '#56b6a2', '#8d879a', '#b8a571', '#bbc9ae'];
 const skinColors = ['#f0c9a8', '#d6a27c', '#a8714c', '#f6d8bf'];
 const clothingColors = ['#f1ede6', '#d0463b', '#3f6cb0', '#4f9a6a', '#e7c24a', '#e58fb0', '#8f98a3', '#2c3036', '#e3793d', '#7bb7d8', '#a4d06a'];
@@ -384,15 +384,15 @@ export function createTown(container, records) {
       plane(x-1.35,3.63,2.545,5.5,1.25,mainSign);printedPanel(x+2.26,3.63,2.546,1.36,1.3,['Exchange type',record.type==='DEX'?'Decentralized':'Centralized','Live activity'],{size:41});
       box(right+.06,3.56,-.1,.1,.95,4.25,'#eee5d7');plane(right+.12,3.56,-.1,4.1,.82,mainSign,Math.PI/2);planter(x-2.4,4.98,-1.6,.85);
       const graffiti=printedPanel(right+.035,2.61,-.67,3.6,.44,['BLOCKTOWN.FUN'],{background:wall,color:'#454b4c',rotation:Math.PI/2,size:83});
-      graffiti.userData={kind:'link',index,label:'Share BlockTown on X',url:SHARE_URL};linkTargets.push(graffiti);
+      graffiti.userData={kind:'link',index,label:'BlockTown on X',url:X_PROFILE_URL};linkTargets.push(graffiti);
     }
     // The small volume board, timber planter, bench and sidewalk A-frame carry the foreground detail.
     softenedBox(x+2.08,1.59,2.56,1.5,1.78,.11,'#d3c6b2',.024);plaques.push(plane(x+2.08,1.59,2.627,1.4,1.66,plaqueTexture(record,accent)));
     softenedBox(x+2.55,.6,3.0,1.1,.12,.5,'#98704d',.03);for(let plant=0;plant<5;plant++)orb(x+2.15+plant*.2,.8,3.0+(plant%2-.5)*.13,.15,'#7c9a55');
     for(const zleg of [-.2,1.0])box(x+3.37,.55,zleg,.44,.32,.06,blackMat);for(let slat=0;slat<4;slat++)softenedBox(x+3.37,.75,.4+(slat-1.5)*.28,.5,.065,.24,'#a47a54',.018);box(x+3.12,.96,.4,.06,.42,1.4,'#a47a54');
     const aFrameX=x+2.86,aFrameZ=5.05;softenedBox(aFrameX,.94,aFrameZ,.66,.85,.065,'#4c4a3e',.025);
-    const followSign=printedPanel(aFrameX,.96,aFrameZ+.039,.56,.73,['SHARE','BLOCKTOWN','ON X','→'],{background:'#2e332e',color:'#e5d8b8',size:94});
-    followSign.userData={kind:'link',index,label:'Share BlockTown on X',url:SHARE_URL};linkTargets.push(followSign);
+    const followSign=printedPanel(aFrameX,.96,aFrameZ+.039,.56,.73,['FOLLOW','BLOCKTOWN','ON X','→'],{background:'#2e332e',color:'#e5d8b8',size:94});
+    followSign.userData={kind:'link',index,label:'BlockTown on X',url:X_PROFILE_URL};linkTargets.push(followSign);
     const followProxy=new THREE.Mesh(new THREE.BoxGeometry(.9,1.1,.7),new THREE.MeshBasicMaterial());followProxy.position.set(aFrameX,.75,aFrameZ);placeInLot(followProxy);followProxy.updateMatrixWorld();followProxy.userData={...followSign.userData,highlight:followSign};linkTargets.push(followProxy);
     box(aFrameX,.57,aFrameZ-.17,.58,.06,.35,'#9d805e');
     // Tall narrow banners face down the street instead of across the shop window.
