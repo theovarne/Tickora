@@ -2,7 +2,7 @@ import { exchanges, loadSnapshot, loadMarketData, formatVolume } from './data.js
 import { createTown } from './scene.js?v=24';
 import { mountExplorer } from './explore-ui.js?v=17';
 import { createAmbientAudio } from './ambient.js?v=23';
-import { contractAddress } from './site-config.js?v=25';
+import { contractAddress } from './site-config.js?v=26';
 
 const $ = (id) => document.getElementById(id);
 const caText=contractAddress.trim();
