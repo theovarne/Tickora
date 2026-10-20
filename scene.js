@@ -11,7 +11,7 @@ import { createSnowCoverState, advanceSnowCover } from './snow-cover.js?v=23';
 
 // An independently built miniature exchange district. All architecture is procedural.
 const SPACING = 16;
-const X_PROFILE_URL = 'https://x.com/blocktown_fun';
+const X_PROFILE_URL = 'https://x.com/TICKORA_';
 const palettes = ['#f0ca56', '#ee6faa', '#dedbd4', '#d8b157', '#4e83cf', '#9181b8', '#c19372', '#71c897', '#66b9bd', '#8f95cb', '#56b6a2', '#8d879a', '#b8a571', '#bbc9ae'];
 const skinColors = ['#f0c9a8', '#d6a27c', '#a8714c', '#f6d8bf'];
 const clothingColors = ['#f1ede6', '#d0463b', '#3f6cb0', '#4f9a6a', '#e7c24a', '#e58fb0', '#8f98a3', '#2c3036', '#e3793d', '#7bb7d8', '#a4d06a'];

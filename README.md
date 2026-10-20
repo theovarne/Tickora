@@ -148,7 +148,7 @@ https://blocktown.fun/?exchange=uniswap&hour=21&cycle=0&weather=rain&intensity=0
 | `weather` | `clear`, `sunny`, `rain`, or `snow`. |
 | `intensity` | Scene intensity from `0.2` to `1`. |
 
-The **Share current view** action in About Tickora captures the current hour and uses `cycle=0` so the recipient opens the same time of day. The footer X link opens the official [@blocktown_fun](https://x.com/blocktown_fun) account. Tickora continues to use `blocktown.fun` and this X handle as its public endpoints.
+The **Share current view** action in About Tickora captures the current hour and uses `cycle=0` so the recipient opens the same time of day. The footer X link opens the official [@TICKORA_](https://x.com/TICKORA_) account. Tickora uses `blocktown.fun` and this X handle as its public endpoints.
 
 ## Deploy to Vercel
 
