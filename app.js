@@ -2,7 +2,7 @@ import { exchanges, loadSnapshot, loadMarketData, formatVolume } from './data.js
 import { createTown } from './scene.js?v=28';
 import { mountExplorer } from './explore-ui.js?v=27';
 import { createAmbientAudio } from './ambient.js?v=23';
-import { contractAddress } from './site-config.js?v=28';
+import { contractAddress } from './site-config.js?v=29';
 
 // Preserve existing preferences and saved markets when upgrading the brand.
 try {
