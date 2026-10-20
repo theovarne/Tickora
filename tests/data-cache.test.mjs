@@ -7,7 +7,7 @@ const bundled = JSON.parse(await readFile(new URL('../assets/data/exchanges.json
 const cexFixture = bundled.cex.find(row => row.id === 'binance');
 const dexFixture = bundled.dex.find(row => row.parentProtocol === 'parent#uniswap' || row.slug === 'uniswap');
 assert(cexFixture && dexFixture, 'The bundled snapshot must contain Binance and Uniswap fixtures.');
-const cacheKey = 'blocktown:market:v1';
+const cacheKey = 'tickora:market:v1';
 let moduleNumber = 0;
 const stamp = ago => new Date(Date.now() - ago).toISOString();
 const oldAt = stamp(2 * 24 * 3600_000), cacheAt = stamp(3600_000);

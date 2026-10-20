@@ -1,5 +1,5 @@
 {
-  "name": "blocktown",
+  "name": "tickora",
   "version": "1.0.0",
   "private": true,
   "description": "A data-driven 3D town for exploring crypto exchange activity.",
@@ -7,7 +7,7 @@
   "homepage": "https://blocktown.fun",
   "repository": {
     "type": "git",
-    "url": "https://github.com/theovarne/BlockTown.git"
+    "url": "https://github.com/theovarne/Tickora.git"
   },
   "engines": {
     "node": ">=22"

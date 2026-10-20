@@ -81,7 +81,7 @@ export function districtMaterial(material, center, warmLights, weather) {
       outgoingLight = mix(districtGray, outgoingLight, districtSaturation);
       #include <opaque_fragment>`);
   };
-  material.customProgramCacheKey = () => `blocktown-district-v23-${warmLights?1:0}-${weather?1:0}`;
+  material.customProgramCacheKey = () => `tickora-district-v23-${warmLights?1:0}-${weather?1:0}`;
   return material;
 }
 

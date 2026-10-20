@@ -1,6 +1,6 @@
 # Third-party notices
 
-BlockTown is an independently implemented miniature exchange district. Its presentation is inspired by the 3D town concept of [Ryan Sael](https://sael.net/).
+Tickora is an independently implemented miniature exchange district. Its presentation is inspired by the 3D town concept of [Ryan Sael](https://sael.net/).
 
 ## Included software and assets
 
@@ -12,11 +12,11 @@ BlockTown is an independently implemented miniature exchange district. Its prese
 
 Exchange names, logos, and other marks belong to their respective owners. Their inclusion identifies the venues shown in the town. The associated marks are not re-licensed by this repository.
 
-The BlockTown mark was recreated as vector artwork from the project owner's supplied reference. Promotional banner artwork was generated for this project. These assets do not alter the rights in third-party exchange marks.
+The Tickora mark was recreated as vector artwork from the project owner's supplied reference. Promotional banner artwork was generated for this project. These assets do not alter the rights in third-party exchange marks.
 
 ## Market data
 
 Centralized exchange activity is obtained from [CoinGecko](https://www.coingecko.com/), and decentralized exchange activity from [DefiLlama](https://defillama.com/). The bundled snapshot contains dated public observations used for resilient browsing. Consult each provider for the terms governing its data and services.
 
-The component licenses above cover their respective third-party files. No license grant for the original BlockTown source or branding is made by this notice.
+The component licenses above cover their respective third-party files. No license grant for the original Tickora source or branding is made by this notice.
 

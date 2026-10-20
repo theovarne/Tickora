@@ -160,7 +160,7 @@ function dexRecord(definition, rows, isLive, updatedAt) {
 let inFlight = null;
 let cachedSnapshot = null;
 let initialLoad = true;
-const CACHE_KEY = 'blocktown:market:v1';
+const CACHE_KEY = 'tickora:market:v1';
 const CACHE_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
 const cachedFields = ['volume', 'source', 'updatedAt', 'trust', 'trustRank', 'country', 'year', 'chains', 'chainCount', 'protocolCount', 'changeDay', 'changeWeek', 'changeDayBasis', 'changeWeekBasis', 'description', 'trend', 'trendLabels', 'includesInterfaceVolume'];
 

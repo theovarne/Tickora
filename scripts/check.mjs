@@ -19,7 +19,7 @@ const moduleQueue = [];
 const display = file => path.relative(root, file).split(path.sep).join('/') || '.';
 
 if (Number(process.versions.node.split('.')[0]) < 22) {
-  console.error('BlockTown check requires Node.js 22 or newer.');
+  console.error('Tickora check requires Node.js 22 or newer.');
   process.exit(1);
 }
 
@@ -263,10 +263,10 @@ checkPackage();
 
 const counts = `${sourceJS.length} source JS files; ${moduleFiles.size} modules in the local import closure; ${references.modules} local module references; ${references.assets} asset references (${assetFiles.size} distinct local files); ${references.package} package file references`;
 if (errors.length) {
-  console.error(`BlockTown check failed: ${errors.length} problem${errors.length === 1 ? '' : 's'}.`);
+  console.error(`Tickora check failed: ${errors.length} problem${errors.length === 1 ? '' : 's'}.`);
   for (const error of errors) console.error(`\n- ${error}`);
   console.error(`\nChecked ${counts}.`);
   process.exitCode = 1;
 } else {
-  console.log(`BlockTown check passed: ${counts}.`);
+  console.log(`Tickora check passed: ${counts}.`);
 }

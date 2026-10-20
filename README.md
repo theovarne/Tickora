@@ -1,9 +1,9 @@
 <div align="center">
-  <img src="assets/blocktown-logo.png" width="90" alt="BlockTown logo">
-  <h1>BlockTown</h1>
+  <img src="assets/tickora-logo.png" width="90" alt="Tickora logo">
+  <h1>Tickora</h1>
   <p>A miniature town, shaped by exchange activity.</p>
   <p>Explore 14 markets, find your favorites, and give the neighborhood a different atmosphere.</p>
-  <p><a href="https://blocktown.fun/"><strong>Visit BlockTown ↗</strong></a></p>
+  <p><a href="https://blocktown.fun/"><strong>Visit Tickora ↗</strong></a></p>
   <p>
     <img src="https://img.shields.io/badge/3D-Interactive-829bb8?style=flat-square" alt="Interactive 3D">
     <img src="https://img.shields.io/badge/Three.js-WebGL-202a36?style=flat-square&amp;logo=threedotjs" alt="Three.js and WebGL">
@@ -12,9 +12,9 @@
   </p>
 </div>
 
-![BlockTown aerial miniature town artwork](docs/images/aerial-banner.png)
+![Tickora — Where markets come alive](assets/social-card.png)
 
-BlockTown turns public, reported trading activity into a browser-based 3D neighborhood. Exchanges become distinct storefronts, while volume informs the crowds around them. The experience combines market discovery with a small, animated world of shop windows, rooftops, trees, traffic, rain, and snow.
+Tickora turns public, reported trading activity into a browser-based 3D neighborhood. Exchanges become distinct storefronts, while volume informs the crowds around them. The experience combines market discovery with a small, animated world of shop windows, rooftops, trees, traffic, rain, and snow.
 
 The app runs as a static website: native JavaScript modules, locally vendored Three.js, and public data requested directly by the browser. No application backend, API keys, or build step are required.
 
@@ -39,9 +39,9 @@ The app runs as a static website: native JavaScript modules, locally vendored Th
     <th>Mobile discovery</th>
   </tr>
   <tr>
-    <td align="center"><img src="docs/images/rain.png" width="260" alt="BlockTown with rain and wet streets"></td>
-    <td align="center"><img src="docs/images/snow.png" width="260" alt="BlockTown with snowfall and snow-covered surfaces"></td>
-    <td align="center"><img src="docs/images/search-mobile.png" width="260" alt="BlockTown exchange search on a phone"></td>
+    <td align="center"><img src="docs/images/rain.png" width="260" alt="Tickora with rain and wet streets"></td>
+    <td align="center"><img src="docs/images/snow.png" width="260" alt="Tickora with snowfall and snow-covered surfaces"></td>
+    <td align="center"><img src="docs/images/search-mobile.png" width="260" alt="Tickora exchange search on a phone"></td>
   </tr>
 </table>
 
@@ -50,8 +50,8 @@ The app runs as a static website: native JavaScript modules, locally vendored Th
 Use **Node.js 22 or later**. The runtime dependencies are already included in `vendor/`; no install step is needed.
 
 ```sh
-git clone https://github.com/theovarne/BlockTown.git
-cd BlockTown
+git clone https://github.com/theovarne/Tickora.git
+cd Tickora
 npm run dev
 ```
 
@@ -88,7 +88,7 @@ Serve the files over HTTP so the browser can load modules and the bundled JSON s
 | `weather.js` | GPU rain, snowfall, ground ripples, particle budgets, and resource cleanup. |
 | `snow-cover.js` | Time-based roof and street snow accumulation, intensity scaling, immediate weather-switch clearing, and pause behavior. |
 | `ambient.js` | Procedural Web Audio soundscapes, weather/time transitions, volume control, and audio lifecycle. |
-| `assets/` | Exchange marks, BlockTown artwork/icons, the local font, and the dated market snapshot. |
+| `assets/` | Exchange marks, Tickora artwork/icons, the local font, and the dated market snapshot. |
 | `vendor/` | Three.js and the selected rendering/postprocessing add-ons. |
 | `scripts/` | Local static server, syntax checks, and project consistency checks. |
 | `tests/` | Node tests for search/filter behavior and market-data cache integrity. |
@@ -128,7 +128,7 @@ Ranks compare the tracked venues **within their CEX or DEX group**. They are not
 | Show / hide the interface | <kbd>/</kbd> |
 | Show / hide playback controls | <kbd>⌘ '</kbd> / <kbd>Ctrl '</kbd>, or the compact controls button on smaller screens |
 | Set weather and time | The weather/light button near the navigation |
-| Save a PNG | About BlockTown → Save scene image |
+| Save a PNG | About Tickora → Save scene image |
 
 In search, <kbd>Enter</kbd> visits the first match and <kbd>↓</kbd> moves focus into the results. Use <kbd>↑</kbd>/<kbd>↓</kbd>, <kbd>Home</kbd>, and <kbd>End</kbd> to navigate result buttons. Store tabs also support arrow keys, Home, and End. Native dialogs close with <kbd>Escape</kbd>; scene shortcuts stay inactive while a dialog is open.
 
@@ -148,7 +148,7 @@ https://blocktown.fun/?exchange=uniswap&hour=21&cycle=0&weather=rain&intensity=0
 | `weather` | `clear`, `sunny`, `rain`, or `snow`. |
 | `intensity` | Scene intensity from `0.2` to `1`. |
 
-The **Share current view** action in About BlockTown captures the current hour and uses `cycle=0` so the recipient opens the same time of day. The footer X link opens the official [@blocktown_fun](https://x.com/blocktown_fun) account.
+The **Share current view** action in About Tickora captures the current hour and uses `cycle=0` so the recipient opens the same time of day. The footer X link opens the official [@blocktown_fun](https://x.com/blocktown_fun) account. Tickora continues to use `blocktown.fun` and this X handle as its public endpoints.
 
 ## Deploy to Vercel
 
@@ -170,7 +170,7 @@ The site uses browser-side public-feed requests. Deployment does not require a b
 - **Search:** extend `aliasGroups` in `explore.js` for alternative names or spellings.
 - **The town:** change storefront styles, geometry, street props, and layout in `scene.js`; tune materials, lighting, and the macro lens in `appearance.js`.
 - **Weather:** tune rain, snow, and ripple budgets in `weather.js`. The renderer uses smaller particle limits on mobile layouts.
-- **Branding:** update `assets/blocktown.svg`, keeping the raster icons, `site.webmanifest`, and social card in sync.
+- **Branding:** update `assets/tickora.svg` and `assets/tickora-logo.png`, keeping the browser icons, `site.webmanifest`, and social card in sync.
 
 ## Attribution and third-party notices
 

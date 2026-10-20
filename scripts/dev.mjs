@@ -66,8 +66,8 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.on('error', error => { console.error('Unable to start BlockTown:', error.message); process.exitCode = 1; });
-server.listen(port, '127.0.0.1', () => console.log(`BlockTown: http://127.0.0.1:${server.address().port}`));
+server.on('error', error => { console.error('Unable to start Tickora:', error.message); process.exitCode = 1; });
+server.listen(port, '127.0.0.1', () => console.log(`Tickora: http://127.0.0.1:${server.address().port}`));
 function shutdown() {
   server.close(() => process.exit(0));
   setTimeout(() => server.closeAllConnections(), 1000).unref();

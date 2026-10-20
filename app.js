@@ -1,8 +1,16 @@
-import { exchanges, loadSnapshot, loadMarketData, formatVolume } from './data.js?v=17';
-import { createTown } from './scene.js?v=24';
-import { mountExplorer } from './explore-ui.js?v=17';
+import { exchanges, loadSnapshot, loadMarketData, formatVolume } from './data.js?v=27';
+import { createTown } from './scene.js?v=27';
+import { mountExplorer } from './explore-ui.js?v=27';
 import { createAmbientAudio } from './ambient.js?v=23';
 import { contractAddress } from './site-config.js?v=26';
+
+// Preserve existing preferences and saved markets when upgrading the brand.
+try {
+  for (const suffix of ['volume','town-volume','sky','exchange','controls','favorites','market:v1']) {
+    const current = `tickora:${suffix}`, previous = localStorage.getItem(`blocktown:${suffix}`);
+    if (localStorage.getItem(current) === null && previous !== null) localStorage.setItem(current, previous);
+  }
+} catch {}
 
 const $ = (id) => document.getElementById(id);
 const caText=contractAddress.trim();
@@ -14,16 +22,16 @@ $('app').classList.toggle('has-ca',Boolean(caText));
 const state = { index: 0, paused: window.matchMedia('(prefers-reduced-motion: reduce)').matches, speed: 8, hour: 19, cycle: true, macro: true, shutter: .22, weather: 'clear', intensity: .65, timeMode: 'auto' };
 const ambient=createAmbientAudio(),soundState={enabled:false,volume:.35,townLevel:.5};
 let soundDesired=false,soundBusy=false;
-try{const saved=localStorage.getItem('blocktown:volume');if(saved!==null&&Number.isFinite(Number(saved)))soundState.volume=Math.max(0,Math.min(1,Number(saved)));}catch{}
+try{const saved=localStorage.getItem('tickora:volume');if(saved!==null&&Number.isFinite(Number(saved)))soundState.volume=Math.max(0,Math.min(1,Number(saved)));}catch{}
 ambient.setVolume(soundState.volume);
-try{const saved=localStorage.getItem('blocktown:town-volume');if(saved!==null&&Number.isFinite(Number(saved)))soundState.townLevel=Math.max(0,Math.min(1,Number(saved)));}catch{}
+try{const saved=localStorage.getItem('tickora:town-volume');if(saved!==null&&Number.isFinite(Number(saved)))soundState.townLevel=Math.max(0,Math.min(1,Number(saved)));}catch{}
 ambient.setTownLevel(soundState.townLevel);
 let town, market, hintTimer, explorer, refreshing = null, graphicsFailed = false;
 const launch = new URLSearchParams(location.search);
 const launchHour = launch.get('hour');
 const weatherNames={clear:'Clear',sunny:'Sunny',rain:'Rain',snow:'Snow'};
 try{
-  const saved=JSON.parse(localStorage.getItem('blocktown:sky')||'null');
+  const saved=JSON.parse(localStorage.getItem('tickora:sky')||'null');
   if(saved&&typeof saved==='object'){
     if(Object.hasOwn(weatherNames,saved.weather))state.weather=saved.weather;
     if(typeof saved.intensity==='number'&&Number.isFinite(saved.intensity))state.intensity=Math.max(.2,Math.min(1,saved.intensity));
@@ -36,7 +44,7 @@ if(Object.hasOwn(weatherNames,launch.get('weather')))state.weather=launch.get('w
 if(launch.get('intensity')!==null&&launch.get('intensity')!==''&&Number.isFinite(Number(launch.get('intensity'))))state.intensity=Math.max(.2,Math.min(1,Number(launch.get('intensity'))));
 state.timeMode=state.cycle?'auto':state.hour>=6&&state.hour<18?'day':'night';
 let selectedId = launch.get('exchange');
-try { selectedId ||= localStorage.getItem('blocktown:exchange'); } catch {}
+try { selectedId ||= localStorage.getItem('tickora:exchange'); } catch {}
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 const icons = [
   '<rect x="4" y="4" width="16" height="16" rx="3"/><path d="M12 8v8M8 12h8"/>',
@@ -97,7 +105,7 @@ function select(index, immediate=false) {
   const next=(index+exchanges.length)%exchanges.length, changed=next!==state.index;
   state.index=next;selectedId=exchanges[next].id;renderCard();town?.setSelection(state.index,immediate);updateTags();
   if(changed&&!immediate)ambient.playVisit();
-  try{localStorage.setItem('blocktown:exchange',selectedId);}catch{}
+  try{localStorage.setItem('tickora:exchange',selectedId);}catch{}
   saveView();
   if($('explore-dialog').open)explorer?.render();
   if(graphicsFailed)renderMap();
@@ -124,7 +132,7 @@ function hour(value){
 }
 function shutter(value,feedback=false){state.shutter=Math.min(.45,Math.max(0,Math.round(value*100)/100));$('shutter').value=state.shutter;town?.setShutter(state.shutter);if(feedback)hint(`Shutter ${state.shutter.toFixed(2)}`);}
 function cycle(value){state.cycle=!!value;$('cycle').checked=state.cycle;state.timeMode=state.cycle?'auto':state.hour>=6&&state.hour<18?'day':'night';renderSky();persistSky();hint(state.cycle?'Day/night cycle on':'Day/night cycle off');saveView();}
-function persistSky(){try{localStorage.setItem('blocktown:sky',JSON.stringify({weather:state.weather,intensity:state.intensity,timeMode:state.timeMode}));}catch{}}
+function persistSky(){try{localStorage.setItem('tickora:sky',JSON.stringify({weather:state.weather,intensity:state.intensity,timeMode:state.timeMode}));}catch{}}
 function renderSky(){
   ambient.setWeather(state.weather,state.intensity);ambient.setTime(state.hour);renderSound();
   $('sky-label').textContent=`${weatherNames[state.weather]} · ${state.timeMode==='auto'?'Auto':state.timeMode==='day'?'Day':'Night'}`;
@@ -150,7 +158,7 @@ function renderSound(){
 async function toggleSound(){
   if(soundBusy)return;soundBusy=true;soundDesired=!soundState.enabled;
   try{soundState.enabled=await ambient.setEnabled(soundDesired);soundDesired=soundState.enabled;}
-  catch(error){soundState.enabled=false;soundDesired=false;console.warn('BlockTown audio',error);hint('Tap sound to try again');}
+  catch(error){soundState.enabled=false;soundDesired=false;console.warn('Tickora audio',error);hint('Tap sound to try again');}
   finally{soundBusy=false;renderSound();}
 }
 function setTimeMode(mode){
@@ -166,7 +174,7 @@ function setWeather(type,intensity=state.intensity){
 function setControls(visible,persist=true){
   $('app').classList.toggle('controls-on',visible);$('show-controls').setAttribute('aria-expanded',String(visible));$('show-controls').setAttribute('aria-label',visible?'Hide playback controls':'Show playback controls');
   if(!visible&&document.querySelector('.playback').contains(document.activeElement))document.activeElement.blur();
-  if(persist)try{localStorage.setItem('blocktown:controls',visible?'1':'0');}catch{}
+  if(persist)try{localStorage.setItem('tickora:controls',visible?'1':'0');}catch{}
 }
 function toggleControls(){setControls(!$('app').classList.contains('controls-on'));}
 function toggleUI(){
@@ -182,7 +190,7 @@ $('daytime').oninput=e=>{state.cycle=false;$('cycle').checked=false;hour(Number(
 $('shutter').oninput=e=>shutter(Number(e.target.value));
 $('show-controls').onclick=toggleControls;
 renderPause();
-try{setControls(localStorage.getItem('blocktown:controls')==='1',false);}catch{setControls(false,false);}
+try{setControls(localStorage.getItem('tickora:controls')==='1',false);}catch{setControls(false,false);}
 $('about').onclick=()=>{$('info').showModal();};$('close').onclick=()=>{$('info').close();};
 $('info').addEventListener('click',e=>{if(e.target===$('info')){const b=$('info').getBoundingClientRect();if(e.clientX<b.left||e.clientX>b.right||e.clientY<b.top||e.clientY>b.bottom)$('info').close();}});
 $('sky-open').onclick=()=>{if($('info').open)$('info').close();if($('explore-dialog').open)explorer?.close();renderSky();$('sky-dialog').showModal();};
@@ -191,8 +199,8 @@ $('sky-time').addEventListener('click',event=>{const button=event.target.closest
 $('sky-weather').addEventListener('click',event=>{const button=event.target.closest('button[data-weather]');if(button)setWeather(button.dataset.weather);});
 $('sky-intensity').oninput=event=>setWeather(state.weather,event.target.value);
 $('sound-toggle').onclick=toggleSound;$('sky-sound-toggle').onclick=toggleSound;
-$('sound-volume').oninput=event=>{soundState.volume=Math.max(0,Math.min(1,Number(event.target.value)));ambient.setVolume(soundState.volume);renderSound();try{localStorage.setItem('blocktown:volume',String(soundState.volume));}catch{}};
-$('sound-town').oninput=event=>{soundState.townLevel=Math.max(0,Math.min(1,Number(event.target.value)));ambient.setTownLevel(soundState.townLevel);renderSound();try{localStorage.setItem('blocktown:town-volume',String(soundState.townLevel));}catch{}};
+$('sound-volume').oninput=event=>{soundState.volume=Math.max(0,Math.min(1,Number(event.target.value)));ambient.setVolume(soundState.volume);renderSound();try{localStorage.setItem('tickora:volume',String(soundState.volume));}catch{}};
+$('sound-town').oninput=event=>{soundState.townLevel=Math.max(0,Math.min(1,Number(event.target.value)));ambient.setTownLevel(soundState.townLevel);renderSound();try{localStorage.setItem('tickora:town-volume',String(soundState.townLevel));}catch{}};
 renderSound();
 document.addEventListener('visibilitychange',async()=>{
   try{soundState.enabled=await ambient.setEnabled(!document.hidden&&soundDesired);renderSound();}
@@ -275,7 +283,7 @@ function shareURL(){
   const url=new URL('https://blocktown.fun/');url.searchParams.set('exchange',exchanges[state.index].id);
   url.searchParams.set('hour',state.hour.toFixed(2));url.searchParams.set('cycle','0');url.searchParams.set('weather',state.weather);url.searchParams.set('intensity',state.intensity.toFixed(2));return url.href;
 }
-function updateShare(){$('share-view').href=`https://x.com/intent/post?text=${encodeURIComponent(`Explore ${exchanges[state.index].name} in BlockTown`)}&url=${encodeURIComponent(shareURL())}`;}
+function updateShare(){$('share-view').href=`https://x.com/intent/post?text=${encodeURIComponent(`Explore ${exchanges[state.index].name} in Tickora`)}&url=${encodeURIComponent(shareURL())}`;}
 $('share-view').addEventListener('pointerdown',updateShare);
 $('share-view').addEventListener('focus',updateShare);
 $('share-view').addEventListener('click',updateShare);
@@ -325,12 +333,12 @@ $('download-scene').onclick=async()=>{
     if(town)blob=await town.captureImage();
     else{
       const canvas=document.createElement('canvas');canvas.width=1280;canvas.height=800;const ctx=canvas.getContext('2d');
-      ctx.fillStyle='#202a36';ctx.fillRect(0,0,1280,800);ctx.fillStyle='#f5f7fa';ctx.font='600 42px "DM Sans",Arial';ctx.fillText('BlockTown',48,72);
+      ctx.fillStyle='#202a36';ctx.fillRect(0,0,1280,800);ctx.fillStyle='#f5f7fa';ctx.font='600 42px "DM Sans",Arial';ctx.fillText('Tickora',48,72);
       ctx.font='18px "DM Sans",Arial';ctx.fillStyle='#c1cfdb';ctx.fillText('The exchange economy, alive.',48,108);
       exchanges.forEach((record,index)=>{const x=48+(index%4)*302,y=150+Math.floor(index/4)*145;ctx.fillStyle=index===state.index?'#3d4b5b':'#293644';ctx.fillRect(x,y,280,125);ctx.fillStyle='#f5f7fa';ctx.font='600 20px "DM Sans",Arial';ctx.fillText(record.name,x+18,y+40);ctx.font='16px "DM Sans",Arial';ctx.fillStyle='#c1cfdb';ctx.fillText(`${record.type} · ${record.available?'$'+formatVolume(record.volume):'—'}`,x+18,y+80);});
       blob=await new Promise((resolve,reject)=>canvas.toBlob(value=>value?resolve(value):reject(new Error('Image capture failed')),'image/png'));
     }
-    const url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download=`BlockTown-${exchanges[state.index].id}.png`;link.click();setTimeout(()=>URL.revokeObjectURL(url),60000);
+    const url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download=`Tickora-${exchanges[state.index].id}.png`;link.click();setTimeout(()=>URL.revokeObjectURL(url),60000);
     button.textContent='Image saved';
   }catch(error){console.error(error);button.textContent='Save again';}
   finally{button.disabled=false;setTimeout(()=>{button.innerHTML=label;},1500);}
@@ -344,7 +352,7 @@ async function start(){
   try{
     town=createTown($('world'),exchanges);town.setSelection(state.index,true);town.setTime(state.hour);town.setWeather?.(state.weather,state.intensity);town.setSpeed(state.speed);town.setMacro(state.macro);town.setShutter(state.shutter);town.setPaused(state.paused);town.onSelect?.(i=>select(i));
     $('loading')?.remove();
-  }catch(error){console.warn('BlockTown graphics',error);graphicsFailed=true;renderMap();}
+  }catch(error){console.warn('Tickora graphics',error);graphicsFailed=true;renderMap();}
   explorer.render();saveView();requestAnimationFrame(animate);
   refreshMarket().catch(console.error);
   setInterval(()=>refreshMarket().catch(console.error),300000);

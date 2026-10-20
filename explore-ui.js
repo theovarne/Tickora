@@ -1,8 +1,8 @@
 import { filterExchanges, getChainOptions } from './explore.js?v=17';
-import { formatVolume } from './data.js?v=17';
+import { formatVolume } from './data.js?v=27';
 
 const $ = id => document.getElementById(id);
-const STORAGE_KEY = 'blocktown:favorites';
+const STORAGE_KEY = 'tickora:favorites';
 
 export function mountExplorer({ records, onSelect, onRefresh, getSelectedId }) {
   const filters = { query: '', type: 'all', chain: 'all', favoritesOnly: false, sort: 'volume-desc' };
@@ -24,7 +24,7 @@ export function mountExplorer({ records, onSelect, onRefresh, getSelectedId }) {
     $('explore-types').querySelectorAll('button').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.type === filters.type)));
     $('explore-favorites').setAttribute('aria-pressed', String(filters.favoritesOnly));
     results = filterExchanges(records, { ...filters, favoriteIds: favorites });
-    $('explore-count').textContent = `${results.length} ${results.length === 1 ? 'exchange' : 'exchanges'}${filters.favoritesOnly ? ' in your collection' : ` · ${records.length} in BlockTown`}`;
+    $('explore-count').textContent = `${results.length} ${results.length === 1 ? 'exchange' : 'exchanges'}${filters.favoritesOnly ? ' in your collection' : ` · ${records.length} in Tickora`}`;
     $('explore-empty').hidden = results.length > 0;
     const fragment = document.createDocumentFragment();
     for (const record of results) {

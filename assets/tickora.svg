@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="180 150 880 880" role="img" aria-labelledby="tickora-logo-title">
+  <title id="tickora-logo-title">Tickora logo</title>
+  <defs>
+    <linearGradient id="red-top" x2="1" y2="1"><stop stop-color="#ff4a4c"/><stop offset="1" stop-color="#ff343a"/></linearGradient>
+    <linearGradient id="red-front" x2="1" y2="1"><stop stop-color="#fa1019"/><stop offset="1" stop-color="#ed0010"/></linearGradient>
+    <linearGradient id="red-side" x2="1" y2="1"><stop stop-color="#c9000b"/><stop offset="1" stop-color="#a70008"/></linearGradient>
+    <linearGradient id="yellow-top" x2="1" y2="1"><stop stop-color="#ffe668"/><stop offset="1" stop-color="#ffdf47"/></linearGradient>
+    <linearGradient id="yellow-front" x2="1" y2="1"><stop stop-color="#ffcd08"/><stop offset="1" stop-color="#ffc000"/></linearGradient>
+    <linearGradient id="yellow-side" x2="1" y2="1"><stop stop-color="#d79b00"/><stop offset="1" stop-color="#ca8900"/></linearGradient>
+    <linearGradient id="blue-top" x2="1" y2="1"><stop stop-color="#258aff"/><stop offset="1" stop-color="#1472f3"/></linearGradient>
+    <linearGradient id="blue-front" x2="1" y2="1"><stop stop-color="#104cde"/><stop offset="1" stop-color="#0844dc"/></linearGradient>
+    <linearGradient id="blue-side" x2="1" y2="1"><stop stop-color="#0738af"/><stop offset="1" stop-color="#06309d"/></linearGradient>
+    <linearGradient id="base-left" x2="1" y2="1"><stop stop-color="#f6f6f5"/><stop offset="1" stop-color="#e5e5e5"/></linearGradient>
+    <linearGradient id="base-right" x2="1" y2="1"><stop stop-color="#246bff"/><stop offset="1" stop-color="#174ce9"/></linearGradient>
+  </defs>
+  <!-- A white isometric foundation with a vivid blue right edge. -->
+  <path d="M309 754 618 570 932 750 624 938Z" fill="#fff"/>
+  <path d="M309 754 624 938 624 1004 309 820Z" fill="url(#base-left)"/>
+  <path d="M624 938 932 750 932 816 624 1004Z" fill="url(#base-right)"/>
+  <!-- The central golden tower, including the raised square crown. -->
+  <path d="M526 303 620 346 620 803 592 786 592 670 560 652 560 767 526 748Z" fill="url(#yellow-front)"/>
+  <path d="M620 346 709 294 709 752 620 803Z" fill="url(#yellow-side)"/>
+  <path d="M526 303 615 251 709 294 620 346Z" fill="url(#yellow-top)"/>
+  <path d="M568 259 627 286 627 325 568 297Z" fill="#ffc008"/>
+  <path d="M627 286 679 256 679 296 627 325Z" fill="#d69800"/>
+  <path d="M568 259 625 227 679 256 627 286Z" fill="url(#yellow-top)"/>
+  <path d="M560 349 592 364 592 594 560 579Z" fill="#a66b00"/>
+  <path d="M560 349 570 354 570 573 560 579Z" fill="#c48b00"/>
+  <path d="M570 354 586 362 586 563 570 573Z" fill="#885500"/>
+  <path d="M560 579 570 573 586 582 592 576 592 594Z" fill="#ffe163"/>
+  <path d="M560 652 592 670 592 786 560 767Z" fill="#936000"/>
+  <path d="M560 652 570 658 570 773 560 767Z" fill="#b77b00"/>
+  <path d="M652 382 679 367 679 495 652 508Z" fill="#966100"/>
+  <path d="M669 373 679 367 679 495 669 501Z" fill="#bc8400"/>
+  <path d="M652 589 679 574 679 714 652 729Z" fill="#956000"/>
+  <path d="M669 580 679 574 679 714 669 720Z" fill="#b77d00"/>
+  <!-- Low red block with a flat roof and deep vertical windows. -->
+  <path d="M382 477 464 514 464 801 437 786 437 704 410 686 410 771 382 755Z" fill="url(#red-front)"/>
+  <path d="M464 514 535 469 535 760 464 801Z" fill="url(#red-side)"/>
+  <path d="M382 477 465 429 535 469 464 514Z" fill="url(#red-top)"/>
+  <path d="M410 524 437 540 437 635 410 619Z" fill="#820006"/>
+  <path d="M410 524 420 530 420 613 410 619Z" fill="#ae0007"/>
+  <path d="M410 619 420 613 437 624 437 635Z" fill="#ff4a4a"/>
+  <path d="M410 686 437 704 437 786 410 771Z" fill="#820006"/>
+  <path d="M410 686 420 693 420 777 410 771Z" fill="#ad0008"/>
+  <path d="M490 552 517 536 517 663 490 679Z" fill="#720006"/>
+  <path d="M507 542 517 536 517 663 507 669Z" fill="#950007"/>
+  <!-- Medium blue block, with the same flat roof geometry. -->
+  <path d="M690 445 770 483 770 814 742 798 742 720 717 705 717 783 690 766Z" fill="url(#blue-front)"/>
+  <path d="M770 483 854 434 854 765 770 814Z" fill="url(#blue-side)"/>
+  <path d="M690 445 778 394 854 434 770 483Z" fill="url(#blue-top)"/>
+  <path d="M717 508 742 522 742 642 717 627Z" fill="#00194e"/>
+  <path d="M717 508 726 513 726 621 717 627Z" fill="#072e88"/>
+  <path d="M717 627 726 621 742 631 742 642Z" fill="#217cff"/>
+  <path d="M717 705 742 720 742 798 717 783Z" fill="#001d60"/>
+  <path d="M717 705 726 710 726 788 717 783Z" fill="#07348f"/>
+  <path d="M799 538 828 521 828 680 799 698Z" fill="#001c5a"/>
+  <path d="M818 527 828 521 828 680 818 686Z" fill="#0d55ce"/>
+  <path d="M799 688 818 676 828 680 799 698Z" fill="#2588ff"/>
+</svg>

@@ -4,7 +4,7 @@ import { RenderPass } from './vendor/addons/postprocessing/RenderPass.js';
 import { GTAOPass } from './vendor/addons/postprocessing/GTAOPass.js';
 import { UnrealBloomPass } from './vendor/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from './vendor/addons/postprocessing/OutputPass.js';
-import { districtMaterial, MiniatureLensPass, lightingAt, weatherLightingAt } from './appearance.js?v=23';
+import { districtMaterial, MiniatureLensPass, lightingAt, weatherLightingAt } from './appearance.js?v=27';
 import { lotAt, lotPoint, lotMatrix, surroundingTown, trafficPaths } from './district.js?v=21';
 import { createWeatherEffects } from './weather.js?v=19';
 import { createSnowCoverState, advanceSnowCover } from './snow-cover.js?v=23';
@@ -97,7 +97,7 @@ function plaqueTexture(record, accent) {
   ctx.font='600 91px "DM Sans", Arial';ctx.fillText(volume,36,120);ctx.font='19px "DM Sans", Arial';ctx.fillText('24H TRADING VOLUME',38,156);
   ctx.fillStyle='#7b786f';ctx.fillRect(36,195,436,2);ctx.font='23px "DM Sans", Arial';ctx.fillText('Exchange type',36,247);ctx.font='bold 23px "DM Sans", Arial';ctx.fillText(record.type === 'DEX' ? 'Decentralized Exchange' : 'Centralized Exchange',36,290);
   ctx.font='21px "DM Sans", Arial';ctx.fillText('Real activity.',36,374);ctx.fillText('One global market.',36,410);
-  ctx.fillStyle=accent;ctx.fillRect(38,463,58,5);ctx.fillStyle='#858177';ctx.font='17px "DM Sans", Arial';ctx.fillText('BLOCKTOWN  ·  LIVE',38,685);
+  ctx.fillStyle=accent;ctx.fillRect(38,463,58,5);ctx.fillStyle='#858177';ctx.font='17px "DM Sans", Arial';ctx.fillText('TICKORA  ·  LIVE',38,685);
   const tex=new THREE.CanvasTexture(canvas);tex.colorSpace=THREE.SRGBColorSpace;return tex;
 }
 
@@ -383,21 +383,21 @@ export function createTown(container, records) {
       for(const roofX of [left+.05,right-.05]){box(roofX,4.75,-.05,.18,.34,5.1,'#cfc3b4');box(roofX,4.94,-.05,.2,.05,5.12,'#b98a6a');}
       plane(x-1.35,3.63,2.545,5.5,1.25,mainSign);printedPanel(x+2.26,3.63,2.546,1.36,1.3,['Exchange type',record.type==='DEX'?'Decentralized':'Centralized','Live activity'],{size:41});
       box(right+.06,3.56,-.1,.1,.95,4.25,'#eee5d7');plane(right+.12,3.56,-.1,4.1,.82,mainSign,Math.PI/2);planter(x-2.4,4.98,-1.6,.85);
-      const graffiti=printedPanel(right+.035,2.61,-.67,3.6,.44,['BLOCKTOWN.FUN'],{background:wall,color:'#454b4c',rotation:Math.PI/2,size:83});
-      graffiti.userData={kind:'link',index,label:'BlockTown on X',url:X_PROFILE_URL};linkTargets.push(graffiti);
+      const graffiti=printedPanel(right+.035,2.61,-.67,3.6,.44,['TICKORA'],{background:wall,color:'#454b4c',rotation:Math.PI/2,size:83});
+      graffiti.userData={kind:'link',index,label:'Tickora on X',url:X_PROFILE_URL};linkTargets.push(graffiti);
     }
     // The small volume board, timber planter, bench and sidewalk A-frame carry the foreground detail.
     softenedBox(x+2.08,1.59,2.56,1.5,1.78,.11,'#d3c6b2',.024);plaques.push(plane(x+2.08,1.59,2.627,1.4,1.66,plaqueTexture(record,accent)));
     softenedBox(x+2.55,.6,3.0,1.1,.12,.5,'#98704d',.03);for(let plant=0;plant<5;plant++)orb(x+2.15+plant*.2,.8,3.0+(plant%2-.5)*.13,.15,'#7c9a55');
     for(const zleg of [-.2,1.0])box(x+3.37,.55,zleg,.44,.32,.06,blackMat);for(let slat=0;slat<4;slat++)softenedBox(x+3.37,.75,.4+(slat-1.5)*.28,.5,.065,.24,'#a47a54',.018);box(x+3.12,.96,.4,.06,.42,1.4,'#a47a54');
     const aFrameX=x+2.86,aFrameZ=5.05;softenedBox(aFrameX,.94,aFrameZ,.66,.85,.065,'#4c4a3e',.025);
-    const followSign=printedPanel(aFrameX,.96,aFrameZ+.039,.56,.73,['FOLLOW','BLOCKTOWN','ON X','→'],{background:'#2e332e',color:'#e5d8b8',size:94});
-    followSign.userData={kind:'link',index,label:'BlockTown on X',url:X_PROFILE_URL};linkTargets.push(followSign);
+    const followSign=printedPanel(aFrameX,.96,aFrameZ+.039,.56,.73,['FOLLOW','TICKORA','ON X','→'],{background:'#2e332e',color:'#e5d8b8',size:94});
+    followSign.userData={kind:'link',index,label:'Tickora on X',url:X_PROFILE_URL};linkTargets.push(followSign);
     const followProxy=new THREE.Mesh(new THREE.BoxGeometry(.9,1.1,.7),new THREE.MeshBasicMaterial());followProxy.position.set(aFrameX,.75,aFrameZ);placeInLot(followProxy);followProxy.updateMatrixWorld();followProxy.userData={...followSign.userData,highlight:followSign};linkTargets.push(followProxy);
     box(aFrameX,.57,aFrameZ-.17,.58,.06,.35,'#9d805e');
     // Tall narrow banners face down the street instead of across the shop window.
     cylinder(x+3.82,2.6,3.05,.052,4.43,blackMat,8);cylinder(x+3.82,.47,3.05,.15,.21,blackMat,10);box(x+3.82,4.77,2.48,.045,.045,1.16,blackMat);box(x+3.82,2.34,2.48,.04,.04,1.12,blackMat);
-    printedPanel(x+3.855,3.56,2.46,.97,2.38,['Now','serving','exchange','activity','BlockTown'],{background:originalAccent,color:'#fbf5e9',rotation:Math.PI/2,size:86});
+    printedPanel(x+3.855,3.56,2.46,.97,2.38,['Now','serving','exchange','activity','Tickora'],{background:originalAccent,color:'#fbf5e9',rotation:Math.PI/2,size:86});
     tree(x+4.02,2.05,2.76);tree(x+4.02,-2.1,2.58);if(index%4===0)tree(x-4.82,-2.22,2.83);
     lamp(x-2.4,7.0);lamp(x+5.3,4.3);lamp(x+5.3,-.5);lamp(x-5.3,.2);
     // Window light reaches the shopfront, customers and paving, with a finite local falloff.
@@ -640,7 +640,7 @@ export function createTown(container, records) {
     updateWarmLighting(look.night);
   }
   function setWeather(type,intensity=.65){
-    if(disposed)throw new Error('This BlockTown scene has been closed.');
+    if(disposed)throw new Error('This Tickora scene has been closed.');
     const normalized=typeof type==='string'?type.trim().toLowerCase():'';
     if(!['clear','sunny','rain','snow'].includes(normalized))throw new RangeError('Weather must be clear, sunny, rain or snow.');
     const amount=Number(intensity);if(!Number.isFinite(amount))throw new TypeError('Weather intensity must be a finite number.');
@@ -683,11 +683,11 @@ export function createTown(container, records) {
     lens.enabled=macro;lens.uniforms.focus.value=camera.position.distanceTo(target);composer.render();renderDirty=false;
   }
   async function captureImage(){
-    if(disposed)throw new Error('This BlockTown scene has been closed.');
-    if(renderer.getContext().isContextLost())throw new Error('The graphics context is unavailable. Reload BlockTown and try again.');
+    if(disposed)throw new Error('This Tickora scene has been closed.');
+    if(renderer.getContext().isContextLost())throw new Error('The graphics context is unavailable. Reload Tickora and try again.');
     camera.updateMatrixWorld();scene.updateMatrixWorld();renderTownFrame();
     return new Promise((resolve,reject)=>{
-      try{renderer.domElement.toBlob(blob=>{if(blob)resolve(blob);else reject(new Error('Unable to capture the BlockTown scene.'));},'image/png');}
+      try{renderer.domElement.toBlob(blob=>{if(blob)resolve(blob);else reject(new Error('Unable to capture the Tickora scene.'));},'image/png');}
       catch(error){reject(error);}
     });
   }
